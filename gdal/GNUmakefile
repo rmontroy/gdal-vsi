@@ -1,44 +1,14 @@
 include GDALmake.opt
 
-GDAL_OBJ	=	frmts/o/*.o \
-			gcore/*.o \
-			port/*.o \
-			alg/*.o \
-			apps/commonutils.o \
-			apps/gdalinfo_lib.o \
-			apps/gdalmdiminfo_lib.o \
-			apps/gdal_translate_lib.o \
-			apps/gdalmdimtranslate_lib.o \
-			apps/gdalwarp_lib.o \
-			apps/ogr2ogr_lib.o \
-			apps/gdaldem_lib.o \
-			apps/nearblack_lib.o \
-			apps/gdal_grid_lib.o \
-			apps/gdal_rasterize_lib.o \
-			apps/gdalbuildvrt_lib.o
+GDAL_OBJ	=	port/*.o 
 
-GDAL_OBJ += ogr/ogrsf_frmts/o/*.o
-
-ifeq ($(GNM_ENABLED),yes)
-   GDAL_OBJ += gnm/*.o gnm/gnm_frmts/o/*.o
-endif
-
-ifeq ($(HAVE_LERC),internal)
-   GDAL_OBJ += third_party/o/*.o
-endif
-
-include ./ogr/file.lst
-GDAL_OBJ += $(addprefix ./ogr/,$(OBJ))
 
 LIBGDAL-yes	:=	$(GDAL_LIB)
 LIBGDAL-$(HAVE_LD_SHARED)	+=	$(GDAL_SLIB)
 # override if we are using libtool
 LIBGDAL-$(HAVE_LIBTOOL)	:= $(LIBGDAL)
 
-default:	lib-target apps-target swig-target gdal.pc
-ifeq ($(PDF_PLUGIN),yes)
-	(cd frmts/pdf; $(MAKE) plugin)
-endif
+default:	lib-target gdal.pc
 
 lib-target:	check-lib;
 
@@ -82,69 +52,16 @@ ifeq ($(MACOSX_FRAMEWORK),yes)
 	install_name_tool -id ${OSX_VERSION_FRAMEWORK_PREFIX}/GDAL .libs/libgdal.dylib
 endif
 
-lib-dependencies:	port-target core-target frmts-target third-party-target ogr-target gnm-target appslib-target
+lib-dependencies:	port-target
 
 check-lib:	lib-dependencies
 	$(MAKE) $(LIBGDAL-yes)
 
-generate_gdal_version_h:
-	(cd gcore; $(MAKE) generate_gdal_version_h)
-
-appslib-target: generate_gdal_version_h
-	(cd apps; $(MAKE) appslib)
-
 port-target:
 	(cd port; $(MAKE))
 
-ogr-target: generate_gdal_version_h
-	(cd ogr; $(MAKE) lib )
-
-ifeq ($(GNM_ENABLED),yes)
-gnm-target: generate_gdal_version_h
-	(cd gnm; $(MAKE) lib )
-else
-gnm-target:	;
-endif
-
-core-target: generate_gdal_version_h
-	(cd gcore; $(MAKE))
-	(cd alg; $(MAKE))
-
-frmts-target: generate_gdal_version_h
-	(cd frmts; $(MAKE))
-
-third-party-target: generate_gdal_version_h
-	(cd third_party; $(MAKE))
-
-apps-target:	lib-target
-	(cd apps; $(MAKE))
-
-ifeq ($(BINDINGS),)
-swig-target: ;
-else
-swig-target:    swig-modules;
-endif
-
-# Python bindings needs gdal-config, hence apps-target
-swig-modules:	apps-target
-	(cd swig; $(MAKE) build)
-
 clean:	lclean
 	(cd port; $(MAKE) clean)
-	(cd ogr; $(MAKE) clean)
-	(cd gnm; $(MAKE) clean)
-	(cd gcore; $(MAKE) clean)
-	(cd frmts; $(MAKE) clean)
-	(cd third_party; $(MAKE) clean)
-	(cd alg; $(MAKE) clean)
-	(cd apps; $(MAKE) clean)
-ifneq ($(BINDINGS),)
-	(cd swig; $(MAKE) clean)
-endif
-ifeq ($(PDF_PLUGIN),yes)
-	(cd frmts/pdf; $(MAKE) clean)
-endif
-
 
 lclean:
 	rm -f *.a *.so config.log config.cache html/*.*
@@ -166,47 +83,7 @@ GDALmake.opt:	GDALmake.opt.in config.status
 config.status:  configure
 	./config.status --recheck
 
-doxygen:
-	doxygen
-
-docs:
-	(cd doc; make html)
-
-.PHONY: man
-
-man:
-	(cd doc; make man)
-	mkdir -p man/man1
-	cp doc/build/man/*.1 man/man1
-
-all:	default
-
-install-docs:
-	$(INSTALL_DIR) $(DESTDIR)$(INST_DOCS)
-	cp -r doc/build/html/* $(DESTDIR)$(INST_DOCS)
-
-install-man:
-	$(INSTALL_DIR) $(DESTDIR)$(INST_MAN)/man1
-	for f in $(wildcard man/man1/*.1) ; do $(INSTALL_DATA) $$f $(DESTDIR)$(INST_MAN)/man1 ; done
-
-install:	install-actions
-
-install-static-lib: static-lib gdal.pc
-	$(INSTALL_LIB) $(GDAL_LIB) $(DESTDIR)$(INST_LIB)
-	$(INSTALL_DIR) $(DESTDIR)$(INST_DATA)
-	$(INSTALL_DIR) $(DESTDIR)$(INST_INCLUDE)
-	(cd port; $(MAKE) install)
-	(cd gcore; $(MAKE) install)
-	(cd frmts; $(MAKE) install)
-	(cd alg; $(MAKE) install)
-	(cd ogr; $(MAKE) install)
-	(cd gnm; $(MAKE) install)
-	for f in LICENSE.TXT data/*.* ; do $(INSTALL_DATA) $$f $(DESTDIR)$(INST_DATA) ; done
-	$(LIBTOOL_FINISH) $(DESTDIR)$(INST_LIB)
-	$(INSTALL_DIR) $(DESTDIR)$(INST_LIB)/pkgconfig
-	$(INSTALL_DATA) gdal.pc $(DESTDIR)$(INST_LIB)/pkgconfig/gdal.pc
-
-install-actions: install-lib
+install: install-lib
 	$(INSTALL_DIR) $(DESTDIR)$(INST_BIN)
 	$(INSTALL_DIR) $(DESTDIR)$(INST_DATA)
 	$(INSTALL_DIR) $(DESTDIR)$(INST_INCLUDE)
@@ -224,19 +101,7 @@ ifeq ($(MACOSX_FRAMEWORK),yes)
 	ln -sfh Versions/Current/GDAL $(DESTDIR)${OSX_FRAMEWORK_PREFIX}/GDAL
 endif
 	(cd port; $(MAKE) install)
-	(cd gcore; $(MAKE) install)
-	(cd frmts; $(MAKE) install)
-	(cd alg; $(MAKE) install)
-	(cd ogr; $(MAKE) install)
-	(cd gnm; $(MAKE) install)
-	(cd apps; $(MAKE) install)
-ifneq ($(BINDINGS),)
-	(cd swig; $(MAKE) install)
-endif
-ifdef INST_BASH_COMPLETION
-	(cd scripts; $(MAKE) install)
-endif
-	for f in LICENSE.TXT data/*.* ; do $(INSTALL_DATA) $$f $(DESTDIR)$(INST_DATA) ; done
+	$(INSTALL_DATA) LICENSE.TXT $(DESTDIR)$(INST_DATA)
 	$(LIBTOOL_FINISH) $(DESTDIR)$(INST_LIB)
 	$(INSTALL_DIR) $(DESTDIR)$(INST_LIB)/pkgconfig
 	$(INSTALL_DATA) gdal.pc $(DESTDIR)$(INST_LIB)/pkgconfig/gdal.pc

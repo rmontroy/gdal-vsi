@@ -502,12 +502,110 @@ void CPLJSONObject::Add(const std::string &osName, const char *pszValue)
     }
 }
 
-// defined in ogr/ogrsf_frmts/geojson/ogrgeojsonwriter.cpp
-CPL_C_START
-/* %.XXXg formatting */
-json_object CPL_DLL* json_object_new_double_with_significant_figures(double dfVal,
-                                                                     int nSignificantFigures);
-CPL_C_END
+
+/************************************************************************/
+/*             OGR_json_double_with_significant_figures_to_string()     */
+/************************************************************************/
+
+static int
+OGR_json_double_with_significant_figures_to_string( struct json_object *jso,
+                                                    struct printbuf *pb,
+                                                    int /* level */,
+                                                    int /* flags */)
+{
+    char szBuffer[75] = {};
+    int nSize = 0;
+    const double dfVal = json_object_get_double(jso);
+    if( CPLIsNan(dfVal))
+        nSize = CPLsnprintf(szBuffer, sizeof(szBuffer), "NaN");
+    else if( CPLIsInf(dfVal) )
+    {
+        if( dfVal > 0 )
+            nSize = CPLsnprintf(szBuffer, sizeof(szBuffer), "Infinity");
+        else
+            nSize = CPLsnprintf(szBuffer, sizeof(szBuffer), "-Infinity");
+    }
+    else
+    {
+        char szFormatting[32] = {};
+        const void* userData =
+#if (!defined(JSON_C_VERSION_NUM)) || (JSON_C_VERSION_NUM < JSON_C_VER_013)
+            jso->_userdata;
+#else
+            json_object_get_userdata(jso);
+#endif
+        const uintptr_t nSignificantFigures = reinterpret_cast<uintptr_t>(userData);
+        const bool bSignificantFiguresIsNegative =
+            (nSignificantFigures >> (8 * sizeof(nSignificantFigures)-1)) != 0;
+        const int nInitialSignificantFigures =
+            bSignificantFiguresIsNegative ? 17 : static_cast<int>(nSignificantFigures);
+        CPLsnprintf(szFormatting, sizeof(szFormatting),
+                    "%%.%dg", nInitialSignificantFigures);
+        nSize = CPLsnprintf(szBuffer, sizeof(szBuffer),
+                            szFormatting, dfVal);
+        const char* pszDot = strchr(szBuffer, '.');
+
+        // Try to avoid .xxxx999999y or .xxxx000000y rounding issues by
+        // decreasing a bit precision.
+        if( nInitialSignificantFigures > 10 &&
+            pszDot != nullptr &&
+            (strstr(pszDot, "999999") != nullptr ||
+             strstr(pszDot, "000000") != nullptr) )
+        {
+            bool bOK = false;
+            for( int i = 1; i <= 3; i++ )
+            {
+                CPLsnprintf(szFormatting, sizeof(szFormatting),
+                            "%%.%dg", nInitialSignificantFigures- i);
+                nSize = CPLsnprintf(szBuffer, sizeof(szBuffer),
+                                    szFormatting, dfVal);
+                pszDot = strchr(szBuffer, '.');
+                if( pszDot != nullptr &&
+                    strstr(pszDot, "999999") == nullptr &&
+                    strstr(pszDot, "000000") == nullptr )
+                {
+                    bOK = true;
+                    break;
+                }
+            }
+            if( !bOK )
+            {
+                CPLsnprintf(szFormatting, sizeof(szFormatting),
+                            "%%.%dg", nInitialSignificantFigures);
+                nSize = CPLsnprintf(szBuffer, sizeof(szBuffer),
+                                    szFormatting, dfVal);
+            }
+        }
+
+        if( nSize+2 < static_cast<int>(sizeof(szBuffer)) &&
+            strchr(szBuffer, '.') == nullptr &&
+            strchr(szBuffer, 'e') == nullptr )
+        {
+            nSize += CPLsnprintf(szBuffer + nSize, sizeof(szBuffer) - nSize,
+                                 ".0");
+        }
+
+    }
+
+    return printbuf_memappend(pb, szBuffer, nSize);
+}
+
+/************************************************************************/
+/*              json_object_new_double_with_significant_figures()       */
+/************************************************************************/
+
+static json_object *
+json_object_new_double_with_significant_figures( double dfVal,
+                                                 int nSignificantFigures )
+{
+    json_object* jso = json_object_new_double(dfVal);
+    json_object_set_serializer(
+        jso, OGR_json_double_with_significant_figures_to_string,
+        reinterpret_cast<void*>(static_cast<size_t>(nSignificantFigures)),
+        nullptr );
+    return jso;
+}
+
 
 /**
  * Add new key - value pair to json object.

@@ -2658,15 +2658,15 @@ void CachedConnection::clear()
 /*                  ~VSICurlFilesystemHandler()                         */
 /************************************************************************/
 
-extern "C" int CPL_DLL GDALIsInGlobalDestructor();
+//extern "C" int CPL_DLL GDALIsInGlobalDestructor();
 
 VSICurlFilesystemHandler::~VSICurlFilesystemHandler()
 {
     VSICurlFilesystemHandler::ClearCache();
-    if( !GDALIsInGlobalDestructor() )
-    {
+    //if( !GDALIsInGlobalDestructor() )
+    //{
         GetConnectionCache().erase(this);
-    }
+    //}
 
     if( hMutex != nullptr )
         CPLDestroyMutex( hMutex );
@@ -2905,10 +2905,10 @@ void VSICurlFilesystemHandler::ClearCache()
     oCacheDirList.clear();
     nCachedFilesInDirList = 0;
 
-    if( !GDALIsInGlobalDestructor() )
-    {
+    //if( !GDALIsInGlobalDestructor() )
+    //{
         GetConnectionCache()[this].clear();
-    }
+    //}
 }
 
 /************************************************************************/

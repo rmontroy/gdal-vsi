@@ -1455,11 +1455,7 @@ AC_ARG_WITH(proj-extra-lib-for-test,
     [  --with-proj-extra-lib-for-test=ARG   Additional libraries to pass the detection test, but not used for libgdal linking (i.e. -lcurl -ltiff ...). Mainly for static libproj],,,)
 
 PROJ_INCLUDE=""
-if test "x$with_proj" = "xno" ; then
-
-  AC_MSG_ERROR([PROJ >= 6 is a required dependency.])
-
-else
+if test "x$with_proj" != "xno" ; then
 
   if test "x$with_proj" = "xyes" -o "x$with_proj" = "x"; then
     ORIG_LIBS="$LIBS"
