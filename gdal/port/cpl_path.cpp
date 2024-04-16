@@ -655,67 +655,67 @@ const char *CPLFormFilename( const char * pszPath,
  * next CPL call.
  */
 
-const char *CPLFormCIFilename( const char * pszPath,
-                               const char * pszBasename,
-                               const char * pszExtension )
+// const char *CPLFormCIFilename( const char * pszPath,
+//                                const char * pszBasename,
+//                                const char * pszExtension )
 
-{
-    // On case insensitive filesystems, just default to CPLFormFilename().
-    if( !VSIIsCaseSensitiveFS(pszPath) )
-        return CPLFormFilename( pszPath, pszBasename, pszExtension );
+// {
+//     // On case insensitive filesystems, just default to CPLFormFilename().
+//     if( !VSIIsCaseSensitiveFS(pszPath) )
+//         return CPLFormFilename( pszPath, pszBasename, pszExtension );
 
-    const char *pszAddedExtSep = "";
-    size_t nLen = strlen(pszBasename) + 2;
+//     const char *pszAddedExtSep = "";
+//     size_t nLen = strlen(pszBasename) + 2;
 
-    if( pszExtension != nullptr )
-        nLen += strlen(pszExtension);
+//     if( pszExtension != nullptr )
+//         nLen += strlen(pszExtension);
 
-    char *pszFilename = static_cast<char *>( VSI_MALLOC_VERBOSE(nLen) );
-    if( pszFilename == nullptr )
-        return "";
+//     char *pszFilename = static_cast<char *>( VSI_MALLOC_VERBOSE(nLen) );
+//     if( pszFilename == nullptr )
+//         return "";
 
-    if( pszExtension == nullptr )
-        pszExtension = "";
-    else if( pszExtension[0] != '.' && strlen(pszExtension) > 0 )
-        pszAddedExtSep = ".";
+//     if( pszExtension == nullptr )
+//         pszExtension = "";
+//     else if( pszExtension[0] != '.' && strlen(pszExtension) > 0 )
+//         pszAddedExtSep = ".";
 
-    snprintf( pszFilename, nLen, "%s%s%s",
-             pszBasename, pszAddedExtSep, pszExtension );
+//     snprintf( pszFilename, nLen, "%s%s%s",
+//              pszBasename, pszAddedExtSep, pszExtension );
 
-    const char *pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
-    VSIStatBufL sStatBuf;
-    int nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
-    if( nStatRet != 0 )
-    {
-        for( size_t i = 0; pszFilename[i] != '\0'; i++ )
-        {
-            if( islower(pszFilename[i]) )
-                pszFilename[i] = static_cast<char>( toupper(pszFilename[i]) );
-        }
+//     const char *pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
+//     VSIStatBufL sStatBuf;
+//     int nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
+//     if( nStatRet != 0 )
+//     {
+//         for( size_t i = 0; pszFilename[i] != '\0'; i++ )
+//         {
+//             if( islower(pszFilename[i]) )
+//                 pszFilename[i] = static_cast<char>( toupper(pszFilename[i]) );
+//         }
 
-        pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
-        nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
-    }
+//         pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
+//         nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
+//     }
 
-    if( nStatRet != 0 )
-    {
-        for( size_t i = 0; pszFilename[i] != '\0'; i++ )
-        {
-            if( isupper(pszFilename[i]) )
-                pszFilename[i] = static_cast<char>( tolower(pszFilename[i]) );
-        }
+//     if( nStatRet != 0 )
+//     {
+//         for( size_t i = 0; pszFilename[i] != '\0'; i++ )
+//         {
+//             if( isupper(pszFilename[i]) )
+//                 pszFilename[i] = static_cast<char>( tolower(pszFilename[i]) );
+//         }
 
-        pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
-        nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
-    }
+//         pszFullPath = CPLFormFilename( pszPath, pszFilename, nullptr );
+//         nStatRet = VSIStatExL( pszFullPath, &sStatBuf, VSI_STAT_EXISTS_FLAG );
+//     }
 
-    if( nStatRet != 0 )
-        pszFullPath = CPLFormFilename( pszPath, pszBasename, pszExtension );
+//     if( nStatRet != 0 )
+//         pszFullPath = CPLFormFilename( pszPath, pszBasename, pszExtension );
 
-    CPLFree( pszFilename );
+//     CPLFree( pszFilename );
 
-    return pszFullPath;
-}
+//     return pszFullPath;
+// }
 
 /************************************************************************/
 /*                     CPLProjectRelativeFilename()                     */
@@ -1105,32 +1105,32 @@ char **CPLCorrespondingPaths( const char *pszOldFilename,
  * @return a filename which is valid till the next CPL call in this thread.
  */
 
-const char *CPLGenerateTempFilename( const char *pszStem )
+// const char *CPLGenerateTempFilename( const char *pszStem )
 
-{
-    const char *pszDir = CPLGetConfigOption( "CPL_TMPDIR", nullptr );
+// {
+//     const char *pszDir = CPLGetConfigOption( "CPL_TMPDIR", nullptr );
 
-    if( pszDir == nullptr )
-        pszDir = CPLGetConfigOption( "TMPDIR", nullptr );
+//     if( pszDir == nullptr )
+//         pszDir = CPLGetConfigOption( "TMPDIR", nullptr );
 
-    if( pszDir == nullptr )
-        pszDir = CPLGetConfigOption( "TEMP", nullptr );
+//     if( pszDir == nullptr )
+//         pszDir = CPLGetConfigOption( "TEMP", nullptr );
 
-    if( pszDir == nullptr )
-        pszDir = ".";
+//     if( pszDir == nullptr )
+//         pszDir = ".";
 
-    if( pszStem == nullptr )
-        pszStem = "";
+//     if( pszStem == nullptr )
+//         pszStem = "";
 
-    static int nTempFileCounter = 0;
-    CPLString osFilename;
-    osFilename.Printf( "%s_%d_%d",
-                       pszStem,
-                       CPLGetCurrentProcessID(),
-                       CPLAtomicInc( &nTempFileCounter ) );
+//     static int nTempFileCounter = 0;
+//     CPLString osFilename;
+//     osFilename.Printf( "%s_%d_%d",
+//                        pszStem,
+//                        CPLGetCurrentProcessID(),
+//                        CPLAtomicInc( &nTempFileCounter ) );
 
-    return CPLFormFilename( pszDir, osFilename, nullptr );
-}
+//     return CPLFormFilename( pszDir, osFilename, nullptr );
+// }
 
 /************************************************************************/
 /*                         CPLExpandTilde()                             */

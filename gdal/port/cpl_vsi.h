@@ -198,7 +198,7 @@ typedef struct VSI_STAT64_T VSIStatBufL;
 #define VSIStatBufL    VSIStatBuf
 #endif
 
-int CPL_DLL     VSIStatL( const char *, VSIStatBufL * ) CPL_WARN_UNUSED_RESULT;
+// int CPL_DLL     VSIStatL( const char *, VSIStatBufL * ) CPL_WARN_UNUSED_RESULT;
 
 /** Flag provided to VSIStatExL() to test if the file exists */
 #define VSI_STAT_EXISTS_FLAG         0x1
@@ -209,7 +209,7 @@ int CPL_DLL     VSIStatL( const char *, VSIStatBufL * ) CPL_WARN_UNUSED_RESULT;
 /** Flag provided to VSIStatExL() to issue a VSIError in case of failure */
 #define VSI_STAT_SET_ERROR_FLAG      0x8
 
-int CPL_DLL     VSIStatExL( const char * pszFilename, VSIStatBufL * psStatBuf, int nFlags ) CPL_WARN_UNUSED_RESULT;
+// int CPL_DLL     VSIStatExL( const char * pszFilename, VSIStatBufL * psStatBuf, int nFlags ) CPL_WARN_UNUSED_RESULT;
 
 int CPL_DLL     VSIIsCaseSensitiveFS( const char * pszFilename );
 
@@ -318,9 +318,9 @@ char CPL_DLL **VSISiblingFiles( const char *pszPath );
 /** Opaque type for a directory iterator */
 typedef struct VSIDIR VSIDIR;
 
-VSIDIR CPL_DLL *VSIOpenDir( const char *pszPath,
-                            int nRecurseDepth,
-                            const char* const *papszOptions);
+// VSIDIR CPL_DLL *VSIOpenDir( const char *pszPath,
+//                             int nRecurseDepth,
+//                             const char* const *papszOptions);
 
 /*! @cond Doxygen_Suppress */
 typedef struct VSIDIREntry VSIDIREntry;
@@ -356,60 +356,42 @@ struct VSIDIREntry
 #endif
 };
 
-const VSIDIREntry CPL_DLL *VSIGetNextDirEntry(VSIDIR* dir);
+// const VSIDIREntry CPL_DLL *VSIGetNextDirEntry(VSIDIR* dir);
 void CPL_DLL VSICloseDir(VSIDIR* dir);
 
 int CPL_DLL VSIMkdir( const char * pszPathname, long mode );
 int CPL_DLL VSIMkdirRecursive( const char * pszPathname, long mode );
 int CPL_DLL VSIRmdir( const char * pszDirname );
-int CPL_DLL VSIRmdirRecursive( const char * pszDirname );
+// int CPL_DLL VSIRmdirRecursive( const char * pszDirname );
 int CPL_DLL VSIUnlink( const char * pszFilename );
 int CPL_DLL *VSIUnlinkBatch( CSLConstList papszFiles );
 int CPL_DLL VSIRename( const char * oldpath, const char * newpath );
-int CPL_DLL VSISync( const char* pszSource, const char* pszTarget,
-                      const char* const * papszOptions,
-                      GDALProgressFunc pProgressFunc,
-                      void *pProgressData,
-                      char*** ppapszOutputs );
+// int CPL_DLL VSISync( const char* pszSource, const char* pszTarget,
+//                       const char* const * papszOptions,
+//                       GDALProgressFunc pProgressFunc,
+//                       void *pProgressData,
+//                       char*** ppapszOutputs );
 
 char CPL_DLL *VSIStrerror( int );
 GIntBig CPL_DLL VSIGetDiskFreeSpace(const char *pszDirname);
 
-void CPL_DLL VSINetworkStatsReset( void );
-char CPL_DLL *VSINetworkStatsGetAsSerializedJSON( char** papszOptions );
+// void CPL_DLL VSINetworkStatsReset( void );
+// char CPL_DLL *VSINetworkStatsGetAsSerializedJSON( char** papszOptions );
 
 /* ==================================================================== */
 /*      Install special file access handlers.                           */
 /* ==================================================================== */
 void CPL_DLL VSIInstallMemFileHandler(void);
-/*! @cond Doxygen_Suppress */
+// /*! @cond Doxygen_Suppress */
 void CPL_DLL VSIInstallLargeFileHandler(void);
-/*! @endcond */
-void CPL_DLL VSIInstallSubFileHandler(void);
+// /*! @endcond */
+// void CPL_DLL VSIInstallSubFileHandler(void);
 void VSIInstallCurlFileHandler(void);
 void CPL_DLL VSICurlClearCache(void);
 void CPL_DLL VSICurlPartialClearCache(const char* pszFilenamePrefix);
-void VSIInstallCurlStreamingFileHandler(void);
+// void VSIInstallCurlStreamingFileHandler(void);
 void VSIInstallS3FileHandler(void);
-void VSIInstallS3StreamingFileHandler(void);
-void VSIInstallGSFileHandler(void);
-void VSIInstallGSStreamingFileHandler(void);
-void VSIInstallAzureFileHandler(void);
-void VSIInstallAzureStreamingFileHandler(void);
-void VSIInstallADLSFileHandler(void);
-void VSIInstallOSSFileHandler(void);
-void VSIInstallOSSStreamingFileHandler(void);
-void VSIInstallSwiftFileHandler(void);
-void VSIInstallSwiftStreamingFileHandler(void);
-void VSIInstallGZipFileHandler(void); /* No reason to export that */
-void VSIInstallZipFileHandler(void); /* No reason to export that */
-void VSIInstallStdinHandler(void); /* No reason to export that */
-void VSIInstallHdfsHandler(void); /* No reason to export that */
-void VSIInstallWebHdfsHandler(void); /* No reason to export that */
-void VSIInstallStdoutHandler(void); /* No reason to export that */
-void CPL_DLL VSIInstallSparseFileHandler(void);
-void VSIInstallTarFileHandler(void); /* No reason to export that */
-void CPL_DLL VSIInstallCryptFileHandler(void);
+// void VSIInstallS3StreamingFileHandler(void);
 void CPL_DLL VSISetCryptKey(const GByte* pabyKey, int nKeySize);
 /*! @cond Doxygen_Suppress */
 void CPL_DLL VSICleanupFileManager(void);

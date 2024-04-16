@@ -141,7 +141,7 @@ void CPL_DLL *CPLGetSymbol( const char *, const char * );
 /* -------------------------------------------------------------------- */
 /*      Fetch executable path.                                          */
 /* -------------------------------------------------------------------- */
-int CPL_DLL CPLGetExecPath( char *pszPathBuf, int nMaxLength );
+// int CPL_DLL CPLGetExecPath( char *pszPathBuf, int nMaxLength );
 
 /* -------------------------------------------------------------------- */
 /*      Filename handling functions.                                    */
@@ -155,9 +155,9 @@ char       CPL_DLL *CPLGetCurrentDir(void);
 const char CPL_DLL *CPLFormFilename( const char *pszPath,
                                      const char *pszBasename,
                                      const char *pszExtension ) CPL_WARN_UNUSED_RESULT CPL_RETURNS_NONNULL;
-const char CPL_DLL *CPLFormCIFilename( const char *pszPath,
-                                       const char *pszBasename,
-                                       const char *pszExtension ) CPL_WARN_UNUSED_RESULT CPL_RETURNS_NONNULL;
+// const char CPL_DLL *CPLFormCIFilename( const char *pszPath,
+//                                        const char *pszBasename,
+//                                        const char *pszExtension ) CPL_WARN_UNUSED_RESULT CPL_RETURNS_NONNULL;
 const char CPL_DLL *CPLResetExtension( const char *, const char * ) CPL_WARN_UNUSED_RESULT CPL_RETURNS_NONNULL;
 const char CPL_DLL *CPLProjectRelativeFilename( const char *pszProjectDir,
                                             const char *pszSecondaryFilename ) CPL_WARN_UNUSED_RESULT CPL_RETURNS_NONNULL;
@@ -203,20 +203,20 @@ int CPL_DLL     CPLStat( const char *, VSIStatBuf * ) CPL_WARN_UNUSED_RESULT;
 /* -------------------------------------------------------------------- */
 
 /** Information on a shared file */
-typedef struct {
-    FILE *fp;               /**< File pointer */
-    int   nRefCount;        /**< Reference counter */
-    int   bLarge;           /**< Whether fp must be interpreted as VSIFILE* */
-    char  *pszFilename;     /**< Filename */
-    char  *pszAccess;       /**< Access mode */
-} CPLSharedFileInfo;
+// typedef struct {
+//     FILE *fp;               /**< File pointer */
+//     int   nRefCount;        /**< Reference counter */
+//     int   bLarge;           /**< Whether fp must be interpreted as VSIFILE* */
+//     char  *pszFilename;     /**< Filename */
+//     char  *pszAccess;       /**< Access mode */
+// } CPLSharedFileInfo;
 
-FILE CPL_DLL    *CPLOpenShared( const char *, const char *, int );
-void CPL_DLL     CPLCloseShared( FILE * );
-CPLSharedFileInfo CPL_DLL *CPLGetSharedList( int * );
-void CPL_DLL     CPLDumpSharedList( FILE * );
-/*! @cond Doxygen_Suppress */
-void CPL_DLL     CPLCleanupSharedFileMutex( void );
+// FILE CPL_DLL    *CPLOpenShared( const char *, const char *, int );
+// void CPL_DLL     CPLCloseShared( FILE * );
+// CPLSharedFileInfo CPL_DLL *CPLGetSharedList( int * );
+// void CPL_DLL     CPLDumpSharedList( FILE * );
+// /*! @cond Doxygen_Suppress */
+// void CPL_DLL     CPLCleanupSharedFileMutex( void );
 /*! @endcond */
 
 /* -------------------------------------------------------------------- */
@@ -234,11 +234,11 @@ void CPL_DLL CPLStringToComplex( const char *pszString,
 /* -------------------------------------------------------------------- */
 /*      Misc other functions.                                           */
 /* -------------------------------------------------------------------- */
-int CPL_DLL CPLUnlinkTree( const char * );
-int CPL_DLL CPLCopyFile( const char *pszNewPath, const char *pszOldPath );
-int CPL_DLL CPLCopyTree( const char *pszNewPath, const char *pszOldPath );
-int CPL_DLL CPLMoveFile( const char *pszNewPath, const char *pszOldPath );
-int CPL_DLL CPLSymlink( const char* pszOldPath, const char* pszNewPath, CSLConstList papszOptions );
+// int CPL_DLL CPLUnlinkTree( const char * );
+// int CPL_DLL CPLCopyFile( const char *pszNewPath, const char *pszOldPath );
+// int CPL_DLL CPLCopyTree( const char *pszNewPath, const char *pszOldPath );
+// int CPL_DLL CPLMoveFile( const char *pszNewPath, const char *pszOldPath );
+// int CPL_DLL CPLSymlink( const char* pszOldPath, const char* pszNewPath, CSLConstList papszOptions );
 
 /* -------------------------------------------------------------------- */
 /*      ZIP Creation.                                                   */
@@ -247,37 +247,37 @@ int CPL_DLL CPLSymlink( const char* pszOldPath, const char* pszNewPath, CSLConst
 /*! @cond Doxygen_Suppress */
 #define CPL_ZIP_API_OFFERED
 /*! @endcond */
-void CPL_DLL  *CPLCreateZip( const char *pszZipFilename, char **papszOptions );
-CPLErr CPL_DLL CPLCreateFileInZip( void *hZip, const char *pszFilename,
-                                   char **papszOptions );
-CPLErr CPL_DLL CPLWriteFileInZip( void *hZip, const void *pBuffer, int nBufferSize );
-CPLErr CPL_DLL CPLCloseFileInZip( void *hZip );
-CPLErr CPL_DLL CPLCloseZip( void *hZip );
+// void CPL_DLL  *CPLCreateZip( const char *pszZipFilename, char **papszOptions );
+// CPLErr CPL_DLL CPLCreateFileInZip( void *hZip, const char *pszFilename,
+//                                    char **papszOptions );
+// CPLErr CPL_DLL CPLWriteFileInZip( void *hZip, const void *pBuffer, int nBufferSize );
+// CPLErr CPL_DLL CPLCloseFileInZip( void *hZip );
+// CPLErr CPL_DLL CPLCloseZip( void *hZip );
 
 /* -------------------------------------------------------------------- */
 /*      ZLib compression                                                */
 /* -------------------------------------------------------------------- */
 
-void CPL_DLL *CPLZLibDeflate( const void* ptr, size_t nBytes, int nLevel,
-                              void* outptr, size_t nOutAvailableBytes,
-                              size_t* pnOutBytes );
-void CPL_DLL *CPLZLibInflate( const void* ptr, size_t nBytes,
-                              void* outptr, size_t nOutAvailableBytes,
-                              size_t* pnOutBytes );
+// void CPL_DLL *CPLZLibDeflate( const void* ptr, size_t nBytes, int nLevel,
+//                               void* outptr, size_t nOutAvailableBytes,
+//                               size_t* pnOutBytes );
+// void CPL_DLL *CPLZLibInflate( const void* ptr, size_t nBytes,
+//                               void* outptr, size_t nOutAvailableBytes,
+//                               size_t* pnOutBytes );
 
 /* -------------------------------------------------------------------- */
 /*      XML validation.                                                 */
 /* -------------------------------------------------------------------- */
-int CPL_DLL CPLValidateXML(const char* pszXMLFilename,
-                           const char* pszXSDFilename,
-                           CSLConstList papszOptions);
+// int CPL_DLL CPLValidateXML(const char* pszXMLFilename,
+//                            const char* pszXSDFilename,
+//                            CSLConstList papszOptions);
 
 /* -------------------------------------------------------------------- */
 /*      Locale handling. Prevents parallel executions of setlocale().   */
 /* -------------------------------------------------------------------- */
-char* CPLsetlocale (int category, const char* locale);
+// char* CPLsetlocale (int category, const char* locale);
 /*! @cond Doxygen_Suppress */
-void CPLCleanupSetlocaleMutex(void);
+// void CPLCleanupSetlocaleMutex(void);
 /*! @endcond */
 
 /*!
@@ -285,7 +285,7 @@ void CPLCleanupSetlocaleMutex(void);
     @param i - tested number
     @return TRUE if i is power of two otherwise return FALSE
 */
-int CPL_DLL CPLIsPowerOfTwo( unsigned int i );
+// int CPL_DLL CPLIsPowerOfTwo( unsigned int i );
 
 CPL_C_END
 
@@ -296,36 +296,36 @@ CPL_C_END
 //! @cond Doxygen_Suppress
 #if defined(__cplusplus) && !defined(CPL_SUPRESS_CPLUSPLUS)
 
-extern "C++"
-{
-class CPL_DLL CPLLocaleC
-{
-    CPL_DISALLOW_COPY_ASSIGN(CPLLocaleC)
-public:
-    CPLLocaleC();
-    ~CPLLocaleC();
+// extern "C++"
+// {
+// class CPL_DLL CPLLocaleC
+// {
+//     CPL_DISALLOW_COPY_ASSIGN(CPLLocaleC)
+// public:
+//     CPLLocaleC();
+//     ~CPLLocaleC();
 
-private:
-    char *pszOldLocale;
-};
+// private:
+//     char *pszOldLocale;
+// };
 
-// Does the same as CPLLocaleC except that, when available, it tries to
-// only affect the current thread. But code that would be dependent of
-// setlocale(LC_NUMERIC, NULL) returning "C", such as current proj.4 versions,
-// will not work depending on the actual implementation
-class CPLThreadLocaleCPrivate;
-class CPL_DLL CPLThreadLocaleC
-{
-    CPL_DISALLOW_COPY_ASSIGN(CPLThreadLocaleC)
+// // Does the same as CPLLocaleC except that, when available, it tries to
+// // only affect the current thread. But code that would be dependent of
+// // setlocale(LC_NUMERIC, NULL) returning "C", such as current proj.4 versions,
+// // will not work depending on the actual implementation
+// class CPLThreadLocaleCPrivate;
+// class CPL_DLL CPLThreadLocaleC
+// {
+//     CPL_DISALLOW_COPY_ASSIGN(CPLThreadLocaleC)
 
-public:
-    CPLThreadLocaleC();
-    ~CPLThreadLocaleC();
+// public:
+//     CPLThreadLocaleC();
+//     ~CPLThreadLocaleC();
 
-private:
-    CPLThreadLocaleCPrivate* m_private;
-};
-}
+// private:
+//     CPLThreadLocaleCPrivate* m_private;
+// };
+// }
 
 #endif /* def __cplusplus */
 //! @endcond
@@ -339,22 +339,22 @@ private:
 //! @cond Doxygen_Suppress
 #if defined(__cplusplus) && !defined(CPL_SUPRESS_CPLUSPLUS)
 
-extern "C++"
-{
-class CPL_DLL CPLConfigOptionSetter
-{
-    CPL_DISALLOW_COPY_ASSIGN(CPLConfigOptionSetter)
-public:
-    CPLConfigOptionSetter(const char* pszKey, const char* pszValue,
-                          bool bSetOnlyIfUndefined);
-    ~CPLConfigOptionSetter();
+// extern "C++"
+// {
+// class CPL_DLL CPLConfigOptionSetter
+// {
+//     CPL_DISALLOW_COPY_ASSIGN(CPLConfigOptionSetter)
+// public:
+//     CPLConfigOptionSetter(const char* pszKey, const char* pszValue,
+//                           bool bSetOnlyIfUndefined);
+//     ~CPLConfigOptionSetter();
 
-private:
-    char* m_pszKey;
-    char *m_pszOldValue;
-    bool m_bRestoreOldValue;
-};
-}
+// private:
+//     char* m_pszKey;
+//     char *m_pszOldValue;
+//     bool m_bRestoreOldValue;
+// };
+// }
 
 #endif /* def __cplusplus */
 //! @endcond

@@ -51,7 +51,7 @@
 // Leave it for backward compatibility, but deprecate.
 #define HAVE_CURLINFO_REDIRECT_URL
 
-void VSICurlStreamingClearCache( void ); // from cpl_vsil_curl_streaming.cpp
+//void VSICurlStreamingClearCache( void ); // from cpl_vsil_curl_streaming.cpp
 
 struct curl_slist* VSICurlSetOptions(CURL* hCurlHandle, const char* pszURL,
                        const char * const* papszOptions);
@@ -197,20 +197,20 @@ class VSICurlFilesystemHandler : public VSIFilesystemHandler
     int                                       nCachedFilesInDirList = 0;
     lru11::Cache<std::string, CachedDirList>  oCacheDirList;
 
-    char**              ParseHTMLFileList(const char* pszFilename,
-                                          int nMaxFiles,
-                                          char* pszData,
-                                          bool* pbGotFileList);
+    // char**              ParseHTMLFileList(const char* pszFilename,
+    //                                       int nMaxFiles,
+    //                                       char* pszData,
+    //                                       bool* pbGotFileList);
 
 protected:
     CPLMutex       *hMutex = nullptr;
 
     virtual VSICurlHandle* CreateFileHandle(const char* pszFilename);
-    virtual char** GetFileList(const char *pszFilename,
-                               int nMaxFiles,
-                               bool* pbGotFileList);
+    // virtual char** GetFileList(const char *pszFilename,
+    //                            int nMaxFiles,
+    //                            bool* pbGotFileList);
 
-    void RegisterEmptyDir( const CPLString& osDirname );
+    // void RegisterEmptyDir( const CPLString& osDirname );
 
     bool AnalyseS3FileList( const CPLString& osBaseURL,
                             const char* pszXML,
@@ -228,7 +228,7 @@ protected:
                             bool& bIsTruncated,
                             CPLString& osNextMarker );
 
-    static const char* GetOptionsStatic();
+    // static const char* GetOptionsStatic();
 
     static bool IsAllowedFilename( const char* pszFilename );
 
@@ -241,30 +241,30 @@ public:
                             bool bSetError,
                             CSLConstList /* papszOptions */ ) override;
 
-    int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
-              int nFlags ) override;
-    int Unlink( const char *pszFilename ) override;
-    int Rename( const char *oldpath, const char *newpath ) override;
-    int Mkdir( const char *pszDirname, long nMode ) override;
-    int Rmdir( const char *pszDirname ) override;
-    char **ReadDir( const char *pszDirname ) override
-        { return ReadDirEx(pszDirname, 0); }
-    char **ReadDirEx( const char *pszDirname, int nMaxFiles ) override;
-    char **SiblingFiles( const char *pszFilename ) override;
+    // int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
+    //           int nFlags ) override;
+    // int Unlink( const char *pszFilename ) override;
+    // int Rename( const char *oldpath, const char *newpath ) override;
+    // int Mkdir( const char *pszDirname, long nMode ) override;
+    // int Rmdir( const char *pszDirname ) override;
+    // char **ReadDir( const char *pszDirname ) override
+    //     { return ReadDirEx(pszDirname, 0); }
+    // char **ReadDirEx( const char *pszDirname, int nMaxFiles ) override;
+    // char **SiblingFiles( const char *pszFilename ) override;
 
     int HasOptimizedReadMultiRange( const char* /* pszPath */ )
         override { return true; }
 
     const char* GetActualURL(const char* pszFilename) override;
 
-    const char* GetOptions() override;
+    // const char* GetOptions() override;
 
-    char** GetFileMetadata( const char * pszFilename, const char* pszDomain,
-                            CSLConstList papszOptions ) override;
+    // char** GetFileMetadata( const char * pszFilename, const char* pszDomain,
+    //                         CSLConstList papszOptions ) override;
 
-    char **ReadDirInternal( const char *pszDirname, int nMaxFiles,
-                            bool* pbGotFileList );
-    void InvalidateDirContent( const char *pszDirname );
+    // char **ReadDirInternal( const char *pszDirname, int nMaxFiles,
+    //                         bool* pbGotFileList );
+    // void InvalidateDirContent( const char *pszDirname );
 
     virtual const char* GetDebugKey() const { return "VSICURL"; }
 
@@ -349,9 +349,9 @@ class VSICurlHandle : public VSIVirtualHandle
 
     bool                m_bUseHead = false;
 
-    int          ReadMultiRangeSingleGet( int nRanges, void ** ppData,
-                                         const vsi_l_offset* panOffsets,
-                                         const size_t* panSizes );
+    // int          ReadMultiRangeSingleGet( int nRanges, void ** ppData,
+    //                                      const vsi_l_offset* panOffsets,
+    //                                      const size_t* panSizes );
     CPLString    GetRedirectURLIfValid(bool& bHasExpired);
 
   protected:
@@ -376,9 +376,9 @@ class VSICurlHandle : public VSIVirtualHandle
     int Seek( vsi_l_offset nOffset, int nWhence ) override;
     vsi_l_offset Tell() override;
     size_t Read( void *pBuffer, size_t nSize, size_t nMemb ) override;
-    int ReadMultiRange( int nRanges, void ** ppData,
-                        const vsi_l_offset* panOffsets,
-                        const size_t* panSizes ) override;
+    // int ReadMultiRange( int nRanges, void ** ppData,
+    //                     const vsi_l_offset* panOffsets,
+    //                     const size_t* panSizes ) override;
     size_t Write( const void *pBuffer, size_t nSize, size_t nMemb ) override;
     int Eof() override;
     int Flush() override;
@@ -409,81 +409,81 @@ class IVSIS3LikeFSHandler: public VSICurlFilesystemHandler
 {
     CPL_DISALLOW_COPY_ASSIGN(IVSIS3LikeFSHandler)
 
-    bool CopyFile(VSILFILE* fpIn,
-                     vsi_l_offset nSourceSize,
-                     const char* pszSource,
-                     const char* pszTarget,
-                     GDALProgressFunc pProgressFunc,
-                     void *pProgressData);
-    virtual int MkdirInternal( const char *pszDirname, long nMode, bool bDoStatCheck );
+    // bool CopyFile(VSILFILE* fpIn,
+    //                  vsi_l_offset nSourceSize,
+    //                  const char* pszSource,
+    //                  const char* pszTarget,
+    //                  GDALProgressFunc pProgressFunc,
+    //                  void *pProgressData);
+    // virtual int MkdirInternal( const char *pszDirname, long nMode, bool bDoStatCheck );
 
   protected:
-    char** GetFileList( const char *pszFilename,
-                        int nMaxFiles,
-                        bool* pbGotFileList ) override;
+    // char** GetFileList( const char *pszFilename,
+    //                     int nMaxFiles,
+    //                     bool* pbGotFileList ) override;
 
     virtual IVSIS3LikeHandleHelper* CreateHandleHelper(
             const char* pszURI, bool bAllowNoObject) = 0;
 
-    virtual int      CopyObject( const char *oldpath, const char *newpath,
-                                 CSLConstList papszMetadata );
+    // virtual int      CopyObject( const char *oldpath, const char *newpath,
+    //                              CSLConstList papszMetadata );
 
     IVSIS3LikeFSHandler() = default;
 
   public:
-    int Unlink( const char *pszFilename ) override;
-    int Mkdir( const char *pszDirname, long nMode ) override;
-    int Rmdir( const char *pszDirname ) override;
-    int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
-              int nFlags ) override;
-    int Rename( const char *oldpath, const char *newpath ) override;
+    // int Unlink( const char *pszFilename ) override;
+    // int Mkdir( const char *pszDirname, long nMode ) override;
+    // int Rmdir( const char *pszDirname ) override;
+    // int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
+    //           int nFlags ) override;
+    // int Rename( const char *oldpath, const char *newpath ) override;
 
-    virtual int      DeleteObject( const char *pszFilename );
+    // virtual int      DeleteObject( const char *pszFilename );
 
     virtual void UpdateMapFromHandle(IVSIS3LikeHandleHelper*) {}
     virtual void UpdateHandleFromMap( IVSIS3LikeHandleHelper * ) {}
 
-    virtual CPLString GetStreamingPath( const char* pszFilename ) const;
+    // virtual CPLString GetStreamingPath( const char* pszFilename ) const;
 
-    bool Sync( const char* pszSource, const char* pszTarget,
-                const char* const * papszOptions,
-                GDALProgressFunc pProgressFunc,
-                void *pProgressData,
-                char*** ppapszOutputs  ) override;
+    // bool Sync( const char* pszSource, const char* pszTarget,
+    //             const char* const * papszOptions,
+    //             GDALProgressFunc pProgressFunc,
+    //             void *pProgressData,
+    //             char*** ppapszOutputs  ) override;
 
-    VSIDIR* OpenDir( const char *pszPath, int nRecurseDepth,
-                             const char* const *papszOptions) override;
+    // VSIDIR* OpenDir( const char *pszPath, int nRecurseDepth,
+    //                          const char* const *papszOptions) override;
 
     // Multipart upload
-    virtual bool SupportsParallelMultipartUpload() const { return false; }
+    // virtual bool SupportsParallelMultipartUpload() const { return false; }
 
-    virtual CPLString InitiateMultipartUpload(
-                                const std::string& osFilename,
-                                IVSIS3LikeHandleHelper *poS3HandleHelper,
-                                int nMaxRetry,
-                                double dfRetryDelay,
-                                CSLConstList papszOptions);
-    virtual CPLString UploadPart(const CPLString& osFilename,
-                         int nPartNumber,
-                         const std::string& osUploadID,
-                         vsi_l_offset nPosition,
-                         const void* pabyBuffer,
-                         size_t nBufferSize,
-                         IVSIS3LikeHandleHelper *poS3HandleHelper,
-                         int nMaxRetry,
-                         double dfRetryDelay);
-    virtual bool CompleteMultipart(const CPLString& osFilename,
-                           const CPLString& osUploadID,
-                           const std::vector<CPLString>& aosEtags,
-                           vsi_l_offset nTotalSize,
-                           IVSIS3LikeHandleHelper *poS3HandleHelper,
-                           int nMaxRetry,
-                           double dfRetryDelay);
-    virtual bool AbortMultipart(const CPLString& osFilename,
-                        const CPLString& osUploadID,
-                        IVSIS3LikeHandleHelper *poS3HandleHelper,
-                        int nMaxRetry,
-                        double dfRetryDelay);
+    // virtual CPLString InitiateMultipartUpload(
+    //                             const std::string& osFilename,
+    //                             IVSIS3LikeHandleHelper *poS3HandleHelper,
+    //                             int nMaxRetry,
+    //                             double dfRetryDelay,
+    //                             CSLConstList papszOptions);
+    // virtual CPLString UploadPart(const CPLString& osFilename,
+    //                      int nPartNumber,
+    //                      const std::string& osUploadID,
+    //                      vsi_l_offset nPosition,
+    //                      const void* pabyBuffer,
+    //                      size_t nBufferSize,
+    //                      IVSIS3LikeHandleHelper *poS3HandleHelper,
+    //                      int nMaxRetry,
+    //                      double dfRetryDelay);
+    // virtual bool CompleteMultipart(const CPLString& osFilename,
+    //                        const CPLString& osUploadID,
+    //                        const std::vector<CPLString>& aosEtags,
+    //                        vsi_l_offset nTotalSize,
+    //                        IVSIS3LikeHandleHelper *poS3HandleHelper,
+    //                        int nMaxRetry,
+    //                        double dfRetryDelay);
+    // virtual bool AbortMultipart(const CPLString& osFilename,
+    //                     const CPLString& osUploadID,
+    //                     IVSIS3LikeHandleHelper *poS3HandleHelper,
+    //                     int nMaxRetry,
+    //                     double dfRetryDelay);
 };
 
 /************************************************************************/
@@ -495,7 +495,7 @@ class IVSIS3LikeHandle:  public VSICurlHandle
     CPL_DISALLOW_COPY_ASSIGN(IVSIS3LikeHandle)
 
   protected:
-    bool UseLimitRangeGetInsteadOfHead() override { return true; }
+    bool UseLimitRangeGetInsteadOfHead() override { return false; }
     bool IsDirectoryFromExists( const char* pszVerb,
                                 int response_code ) override
         {
@@ -520,268 +520,268 @@ class IVSIS3LikeHandle:  public VSICurlHandle
 /*                            VSIS3WriteHandle                          */
 /************************************************************************/
 
-class VSIS3WriteHandle final : public VSIVirtualHandle
-{
-    CPL_DISALLOW_COPY_ASSIGN(VSIS3WriteHandle)
+// class VSIS3WriteHandle final : public VSIVirtualHandle
+// {
+//     CPL_DISALLOW_COPY_ASSIGN(VSIS3WriteHandle)
 
-    IVSIS3LikeFSHandler     *m_poFS = nullptr;
-    CPLString           m_osFilename{};
-    IVSIS3LikeHandleHelper  *m_poS3HandleHelper = nullptr;
-    bool                m_bUseChunked = false;
-    CPLStringList       m_aosOptions{};
+//     IVSIS3LikeFSHandler     *m_poFS = nullptr;
+//     CPLString           m_osFilename{};
+//     IVSIS3LikeHandleHelper  *m_poS3HandleHelper = nullptr;
+//     bool                m_bUseChunked = false;
+//     CPLStringList       m_aosOptions{};
 
-    vsi_l_offset        m_nCurOffset = 0;
-    int                 m_nBufferOff = 0;
-    int                 m_nBufferSize = 0;
-    bool                m_bClosed = false;
-    GByte              *m_pabyBuffer = nullptr;
-    CPLString           m_osUploadID{};
-    int                 m_nPartNumber = 0;
-    std::vector<CPLString> m_aosEtags{};
-    bool                m_bError = false;
+//     vsi_l_offset        m_nCurOffset = 0;
+//     int                 m_nBufferOff = 0;
+//     int                 m_nBufferSize = 0;
+//     bool                m_bClosed = false;
+//     GByte              *m_pabyBuffer = nullptr;
+//     CPLString           m_osUploadID{};
+//     int                 m_nPartNumber = 0;
+//     std::vector<CPLString> m_aosEtags{};
+//     bool                m_bError = false;
 
-    CURLM              *m_hCurlMulti = nullptr;
-    CURL               *m_hCurl = nullptr;
-    const void         *m_pBuffer = nullptr;
-    CPLString           m_osCurlErrBuf{};
-    size_t              m_nChunkedBufferOff = 0;
-    size_t              m_nChunkedBufferSize = 0;
-    size_t              m_nWrittenInPUT = 0;
+//     CURLM              *m_hCurlMulti = nullptr;
+//     CURL               *m_hCurl = nullptr;
+//     const void         *m_pBuffer = nullptr;
+//     CPLString           m_osCurlErrBuf{};
+//     size_t              m_nChunkedBufferOff = 0;
+//     size_t              m_nChunkedBufferSize = 0;
+//     size_t              m_nWrittenInPUT = 0;
 
-    int                 m_nMaxRetry = 0;
-    double              m_dfRetryDelay = 0.0;
-    WriteFuncStruct     m_sWriteFuncHeaderData{};
+//     int                 m_nMaxRetry = 0;
+//     double              m_dfRetryDelay = 0.0;
+//     WriteFuncStruct     m_sWriteFuncHeaderData{};
 
-    bool                UploadPart();
-    bool                DoSinglePartPUT();
+//     bool                UploadPart();
+//     bool                DoSinglePartPUT();
 
-    static size_t       ReadCallBackBufferChunked( char *buffer, size_t size,
-                                            size_t nitems, void *instream );
-    size_t              WriteChunked( const void *pBuffer,
-                                      size_t nSize, size_t nMemb );
-    int                 FinishChunkedTransfer();
+//     static size_t       ReadCallBackBufferChunked( char *buffer, size_t size,
+//                                             size_t nitems, void *instream );
+//     size_t              WriteChunked( const void *pBuffer,
+//                                       size_t nSize, size_t nMemb );
+//     int                 FinishChunkedTransfer();
 
-    void                InvalidateParentDirectory();
+//     void                InvalidateParentDirectory();
 
-    public:
-      VSIS3WriteHandle( IVSIS3LikeFSHandler* poFS,
-                        const char* pszFilename,
-                        IVSIS3LikeHandleHelper* poS3HandleHelper,
-                        bool bUseChunked,
-                        CSLConstList papszOptions );
-      ~VSIS3WriteHandle() override;
+//     public:
+//       VSIS3WriteHandle( IVSIS3LikeFSHandler* poFS,
+//                         const char* pszFilename,
+//                         IVSIS3LikeHandleHelper* poS3HandleHelper,
+//                         bool bUseChunked,
+//                         CSLConstList papszOptions );
+//       ~VSIS3WriteHandle() override;
 
-      int Seek( vsi_l_offset nOffset, int nWhence ) override;
-      vsi_l_offset Tell() override;
-      size_t Read( void *pBuffer, size_t nSize, size_t nMemb ) override;
-      size_t Write( const void *pBuffer, size_t nSize, size_t nMemb ) override;
-      int Eof() override;
-      int Close() override;
+//       int Seek( vsi_l_offset nOffset, int nWhence ) override;
+//       vsi_l_offset Tell() override;
+//       size_t Read( void *pBuffer, size_t nSize, size_t nMemb ) override;
+//       size_t Write( const void *pBuffer, size_t nSize, size_t nMemb ) override;
+//       int Eof() override;
+//       int Close() override;
 
-      bool IsOK() { return m_bUseChunked || m_pabyBuffer != nullptr; }
-};
+//       bool IsOK() { return m_bUseChunked || m_pabyBuffer != nullptr; }
+// };
 
 /************************************************************************/
 /*                        VSIAppendWriteHandle                          */
 /************************************************************************/
 
-class VSIAppendWriteHandle : public VSIVirtualHandle
-{
-    CPL_DISALLOW_COPY_ASSIGN(VSIAppendWriteHandle)
+// class VSIAppendWriteHandle : public VSIVirtualHandle
+// {
+//     CPL_DISALLOW_COPY_ASSIGN(VSIAppendWriteHandle)
 
-    protected:
+//     protected:
 
-    VSICurlFilesystemHandler* m_poFS = nullptr;
-    CPLString           m_osFSPrefix{};
-    CPLString           m_osFilename{};
+//     VSICurlFilesystemHandler* m_poFS = nullptr;
+//     CPLString           m_osFSPrefix{};
+//     CPLString           m_osFilename{};
 
-    vsi_l_offset        m_nCurOffset = 0;
-    int                 m_nBufferOff = 0;
-    int                 m_nBufferSize = 0;
-    int                 m_nBufferOffReadCallback = 0;
-    bool                m_bClosed = false;
-    GByte              *m_pabyBuffer = nullptr;
-    bool                m_bError = false;
+//     vsi_l_offset        m_nCurOffset = 0;
+//     int                 m_nBufferOff = 0;
+//     int                 m_nBufferSize = 0;
+//     int                 m_nBufferOffReadCallback = 0;
+//     bool                m_bClosed = false;
+//     GByte              *m_pabyBuffer = nullptr;
+//     bool                m_bError = false;
 
-    static size_t       ReadCallBackBuffer( char *buffer, size_t size,
-                                            size_t nitems, void *instream );
-    virtual bool        Send(bool bIsLastBlock) = 0;
+//     static size_t       ReadCallBackBuffer( char *buffer, size_t size,
+//                                             size_t nitems, void *instream );
+//     virtual bool        Send(bool bIsLastBlock) = 0;
 
-    public:
-        VSIAppendWriteHandle( VSICurlFilesystemHandler* poFS,
-                              const char* pszFSPrefix,
-                              const char* pszFilename,
-                              int nChunkSize );
-        virtual ~VSIAppendWriteHandle();
+//     public:
+//         VSIAppendWriteHandle( VSICurlFilesystemHandler* poFS,
+//                               const char* pszFSPrefix,
+//                               const char* pszFilename,
+//                               int nChunkSize );
+//         virtual ~VSIAppendWriteHandle();
 
-        int Seek( vsi_l_offset nOffset, int nWhence ) override;
-        vsi_l_offset Tell() override;
-        size_t Read( void *pBuffer, size_t nSize, size_t nMemb ) override;
-        size_t Write( const void *pBuffer, size_t nSize, size_t nMemb ) override;
-        int  Eof() override;
-        int  Close() override;
+//         int Seek( vsi_l_offset nOffset, int nWhence ) override;
+//         vsi_l_offset Tell() override;
+//         size_t Read( void *pBuffer, size_t nSize, size_t nMemb ) override;
+//         size_t Write( const void *pBuffer, size_t nSize, size_t nMemb ) override;
+//         int  Eof() override;
+//         int  Close() override;
 
-        bool              IsOK() { return m_pabyBuffer != nullptr; }
-};
+//         bool              IsOK() { return m_pabyBuffer != nullptr; }
+// };
 
 /************************************************************************/
 /*                         CurlRequestHelper                            */
 /************************************************************************/
 
-struct CurlRequestHelper
-{
-    WriteFuncStruct sWriteFuncData{};
-    WriteFuncStruct sWriteFuncHeaderData{};
-    char szCurlErrBuf[CURL_ERROR_SIZE+1] = {};
+// struct CurlRequestHelper
+// {
+//     WriteFuncStruct sWriteFuncData{};
+//     WriteFuncStruct sWriteFuncHeaderData{};
+//     char szCurlErrBuf[CURL_ERROR_SIZE+1] = {};
 
-    CurlRequestHelper();
-    ~CurlRequestHelper();
-    long perform(CURL* hCurlHandle,
-                 struct curl_slist* headers, // ownership transferred
-                 VSICurlFilesystemHandler *poFS,
-                 IVSIS3LikeHandleHelper *poS3HandleHelper);
-};
+//     CurlRequestHelper();
+//     ~CurlRequestHelper();
+//     long perform(CURL* hCurlHandle,
+//                  struct curl_slist* headers, // ownership transferred
+//                  VSICurlFilesystemHandler *poFS,
+//                  IVSIS3LikeHandleHelper *poS3HandleHelper);
+// };
 
 /************************************************************************/
 /*                       NetworkStatisticsLogger                        */
 /************************************************************************/
 
-class NetworkStatisticsLogger
-{
-    static int gnEnabled;
-    static NetworkStatisticsLogger gInstance;
+// class NetworkStatisticsLogger
+// {
+//     static int gnEnabled;
+//     static NetworkStatisticsLogger gInstance;
 
-    NetworkStatisticsLogger() = default;
+//     NetworkStatisticsLogger() = default;
 
-    std::mutex m_mutex{};
+//     std::mutex m_mutex{};
 
-    struct Counters
-    {
-        GIntBig nHEAD = 0;
-        GIntBig nGET = 0;
-        GIntBig nPUT = 0;
-        GIntBig nPOST = 0;
-        GIntBig nDELETE = 0;
-        GIntBig nGETDownloadedBytes = 0;
-        GIntBig nPUTUploadedBytes = 0;
-        GIntBig nPOSTDownloadedBytes = 0;
-        GIntBig nPOSTUploadedBytes = 0;
-    };
+//     struct Counters
+//     {
+//         GIntBig nHEAD = 0;
+//         GIntBig nGET = 0;
+//         GIntBig nPUT = 0;
+//         GIntBig nPOST = 0;
+//         GIntBig nDELETE = 0;
+//         GIntBig nGETDownloadedBytes = 0;
+//         GIntBig nPUTUploadedBytes = 0;
+//         GIntBig nPOSTDownloadedBytes = 0;
+//         GIntBig nPOSTUploadedBytes = 0;
+//     };
 
-    enum class ContextPathType
-    {
-        FILESYSTEM,
-        FILE,
-        ACTION,
-    };
+//     enum class ContextPathType
+//     {
+//         FILESYSTEM,
+//         FILE,
+//         ACTION,
+//     };
 
-    struct ContextPathItem
-    {
-        ContextPathType eType;
-        CPLString       osName;
+//     struct ContextPathItem
+//     {
+//         ContextPathType eType;
+//         CPLString       osName;
 
-        ContextPathItem(ContextPathType eTypeIn, const CPLString& osNameIn):
-            eType(eTypeIn), osName(osNameIn) {}
+//         ContextPathItem(ContextPathType eTypeIn, const CPLString& osNameIn):
+//             eType(eTypeIn), osName(osNameIn) {}
 
-        bool operator< (const ContextPathItem& other ) const
-        {
-            if( static_cast<int>(eType) < static_cast<int>(other.eType) )
-                return true;
-            if( static_cast<int>(eType) > static_cast<int>(other.eType) )
-                return false;
-            return osName < other.osName;
-        }
-    };
+//         bool operator< (const ContextPathItem& other ) const
+//         {
+//             if( static_cast<int>(eType) < static_cast<int>(other.eType) )
+//                 return true;
+//             if( static_cast<int>(eType) > static_cast<int>(other.eType) )
+//                 return false;
+//             return osName < other.osName;
+//         }
+//     };
 
-    struct Stats
-    {
-        Counters counters{};
-        std::map<ContextPathItem, Stats> children{};
+//     struct Stats
+//     {
+//         Counters counters{};
+//         std::map<ContextPathItem, Stats> children{};
 
-        void AsJSON(CPLJSONObject& oJSON) const;
-    };
+//         void AsJSON(CPLJSONObject& oJSON) const;
+//     };
 
-    Stats m_stats{};
-    std::map<GIntBig, std::vector<ContextPathItem>> m_mapThreadIdToContextPath{};
+//     Stats m_stats{};
+//     std::map<GIntBig, std::vector<ContextPathItem>> m_mapThreadIdToContextPath{};
 
-    static void ReadEnabled();
+//     static void ReadEnabled();
 
-    std::vector<Counters*> GetCountersForContext();
+//     std::vector<Counters*> GetCountersForContext();
 
-public:
+// public:
 
-    static inline bool IsEnabled()
-    {
-        if( gnEnabled < 0)
-        {
-            ReadEnabled();
-        }
-        return gnEnabled == TRUE;
-    }
+//     static inline bool IsEnabled()
+//     {
+//         if( gnEnabled < 0)
+//         {
+//             ReadEnabled();
+//         }
+//         return gnEnabled == TRUE;
+//     }
 
-    static void EnterFileSystem(const char* pszName);
+//     static void EnterFileSystem(const char* pszName);
 
-    static void LeaveFileSystem();
+//     static void LeaveFileSystem();
 
-    static void EnterFile(const char* pszName);
+//     static void EnterFile(const char* pszName);
 
-    static void LeaveFile();
+//     static void LeaveFile();
 
-    static void EnterAction(const char* pszName);
+//     static void EnterAction(const char* pszName);
 
-    static void LeaveAction();
+//     static void LeaveAction();
 
-    static void LogHEAD();
+//     static void LogHEAD();
 
-    static void LogGET(size_t nDownloadedBytes);
+//     static void LogGET(size_t nDownloadedBytes);
 
-    static void LogPUT(size_t nUploadedBytes);
+//     static void LogPUT(size_t nUploadedBytes);
 
-    static void LogPOST(size_t nUploadedBytes,
-                        size_t nDownloadedBytes);
+//     static void LogPOST(size_t nUploadedBytes,
+//                         size_t nDownloadedBytes);
 
-    static void LogDELETE();
+//     static void LogDELETE();
 
-    static void Reset();
+//     static void Reset();
 
-    static CPLString GetReportAsSerializedJSON();
-};
+//     static CPLString GetReportAsSerializedJSON();
+// };
 
-struct NetworkStatisticsFileSystem
-{
-    inline explicit NetworkStatisticsFileSystem(const char* pszName) {
-        NetworkStatisticsLogger::EnterFileSystem(pszName);
-    }
+// struct NetworkStatisticsFileSystem
+// {
+//     inline explicit NetworkStatisticsFileSystem(const char* pszName) {
+//         NetworkStatisticsLogger::EnterFileSystem(pszName);
+//     }
 
-    inline ~NetworkStatisticsFileSystem()
-    {
-        NetworkStatisticsLogger::LeaveFileSystem();
-    }
-};
+//     inline ~NetworkStatisticsFileSystem()
+//     {
+//         NetworkStatisticsLogger::LeaveFileSystem();
+//     }
+// };
 
-struct NetworkStatisticsFile
-{
-    inline explicit NetworkStatisticsFile(const char* pszName) {
-        NetworkStatisticsLogger::EnterFile(pszName);
-    }
+// struct NetworkStatisticsFile
+// {
+//     inline explicit NetworkStatisticsFile(const char* pszName) {
+//         NetworkStatisticsLogger::EnterFile(pszName);
+//     }
 
-    inline ~NetworkStatisticsFile()
-    {
-        NetworkStatisticsLogger::LeaveFile();
-    }
-};
+//     inline ~NetworkStatisticsFile()
+//     {
+//         NetworkStatisticsLogger::LeaveFile();
+//     }
+// };
 
-struct NetworkStatisticsAction
-{
-    inline explicit NetworkStatisticsAction(const char* pszName) {
-        NetworkStatisticsLogger::EnterAction(pszName);
-    }
+// struct NetworkStatisticsAction
+// {
+//     inline explicit NetworkStatisticsAction(const char* pszName) {
+//         NetworkStatisticsLogger::EnterAction(pszName);
+//     }
 
-    inline ~NetworkStatisticsAction()
-    {
-        NetworkStatisticsLogger::LeaveAction();
-    }
-};
+//     inline ~NetworkStatisticsAction()
+//     {
+//         NetworkStatisticsLogger::LeaveAction();
+//     }
+// };
 
 
 int VSICURLGetDownloadChunkSize();

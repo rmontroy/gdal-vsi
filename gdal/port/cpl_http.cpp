@@ -424,29 +424,29 @@ static size_t CPLHdrWriteFct( void *buffer, size_t size, size_t nmemb,
 /************************************************************************/
 /*                        CPLHTTPReadFunction()                         */
 /************************************************************************/
-static size_t CPLHTTPReadFunction(char *buffer, size_t size, size_t nitems, void *arg)
-{
-    return VSIFReadL(buffer, size, nitems, static_cast<VSILFILE*>(arg));
-}
+// static size_t CPLHTTPReadFunction(char *buffer, size_t size, size_t nitems, void *arg)
+// {
+//     return VSIFReadL(buffer, size, nitems, static_cast<VSILFILE*>(arg));
+// }
 
 /************************************************************************/
 /*                        CPLHTTPSeekFunction()                         */
 /************************************************************************/
-static int CPLHTTPSeekFunction(void *arg, curl_off_t offset, int origin)
-{
-    if( VSIFSeekL( static_cast<VSILFILE*>(arg), offset, origin ) == 0 )
-        return CURL_SEEKFUNC_OK;
-    else
-        return CURL_SEEKFUNC_FAIL;
-}
+// static int CPLHTTPSeekFunction(void *arg, curl_off_t offset, int origin)
+// {
+//     if( VSIFSeekL( static_cast<VSILFILE*>(arg), offset, origin ) == 0 )
+//         return CURL_SEEKFUNC_OK;
+//     else
+//         return CURL_SEEKFUNC_FAIL;
+// }
 
 /************************************************************************/
 /*                        CPLHTTPFreeFunction()                         */
 /************************************************************************/
-static void CPLHTTPFreeFunction(void *arg)
-{
-    VSIFCloseL(static_cast<VSILFILE*>(arg));
-}
+// static void CPLHTTPFreeFunction(void *arg)
+// {
+//     VSIFCloseL(static_cast<VSILFILE*>(arg));
+// }
 #endif // CURL_AT_LEAST_VERSION(7,56,0)
 
 typedef struct {
@@ -608,151 +608,151 @@ static void CPLHTTPEmitFetchDebug(const char* pszURL,
 /*                      class CPLHTTPPostFields                         */
 /************************************************************************/
 
-class CPLHTTPPostFields
-{
-    public:
-        CPLHTTPPostFields() = default;
-        CPLHTTPPostFields & operator=(const CPLHTTPPostFields&) = delete;
-        CPLHTTPPostFields(const CPLHTTPPostFields&) = delete;
-        CPLErr Fill(CURL *http_handle, CSLConstList papszOptions)
-        {
-            // Fill POST form if present
-            const char* pszFormFilePath = CSLFetchNameValue( papszOptions,
-                "FORM_FILE_PATH" );
-            const char* pszParametersCount = CSLFetchNameValue( papszOptions,
-                "FORM_ITEM_COUNT" );
+// class CPLHTTPPostFields
+// {
+//     public:
+//         CPLHTTPPostFields() = default;
+//         CPLHTTPPostFields & operator=(const CPLHTTPPostFields&) = delete;
+//         CPLHTTPPostFields(const CPLHTTPPostFields&) = delete;
+//         CPLErr Fill(CURL *http_handle, CSLConstList papszOptions)
+//         {
+//             // Fill POST form if present
+//             const char* pszFormFilePath = CSLFetchNameValue( papszOptions,
+//                 "FORM_FILE_PATH" );
+//             const char* pszParametersCount = CSLFetchNameValue( papszOptions,
+//                 "FORM_ITEM_COUNT" );
 
-            if( pszFormFilePath != nullptr || pszParametersCount != nullptr )
-            {
-#if CURL_AT_LEAST_VERSION(7,56,0)
-                mime = curl_mime_init(http_handle);
-                curl_mimepart *mimepart = curl_mime_addpart(mime);
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-                struct curl_httppost *lastptr = nullptr;
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
-                if( pszFormFilePath != nullptr )
-                {
-                    const char* pszFormFileName = CSLFetchNameValue( papszOptions,
-                        "FORM_FILE_NAME" );
-                    const char* pszFilename = CPLGetFilename( pszFormFilePath );
-                    if( pszFormFileName == nullptr )
-                    {
-                        pszFormFileName = pszFilename;
-                    }
+//             if( pszFormFilePath != nullptr || pszParametersCount != nullptr )
+//             {
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//                 mime = curl_mime_init(http_handle);
+//                 curl_mimepart *mimepart = curl_mime_addpart(mime);
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//                 struct curl_httppost *lastptr = nullptr;
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
+//                 if( pszFormFilePath != nullptr )
+//                 {
+//                     const char* pszFormFileName = CSLFetchNameValue( papszOptions,
+//                         "FORM_FILE_NAME" );
+//                     const char* pszFilename = CPLGetFilename( pszFormFilePath );
+//                     if( pszFormFileName == nullptr )
+//                     {
+//                         pszFormFileName = pszFilename;
+//                     }
 
-                    VSIStatBufL sStat;
-                    if( VSIStatL( pszFormFilePath, &sStat ) == 0)
-                    {
-#if CURL_AT_LEAST_VERSION(7,56,0)
-                        VSILFILE *mime_fp = VSIFOpenL( pszFormFilePath, "rb" );
-                        if( mime_fp != nullptr )
-                        {
-                            curl_mime_name(mimepart, pszFormFileName);
-                            CPL_IGNORE_RET_VAL(curl_mime_filename(mimepart, pszFilename));
-                            curl_mime_data_cb(mimepart, sStat.st_size,
-                                CPLHTTPReadFunction, CPLHTTPSeekFunction,
-                                CPLHTTPFreeFunction, mime_fp);
-                        }
-                        else
-                        {
-                            osErrMsg = CPLSPrintf("Failed to open file %s",
-                                pszFormFilePath);
-                            return CE_Failure;
-                        }
+//                     VSIStatBufL sStat;
+//                     if( VSIStatL( pszFormFilePath, &sStat ) == 0)
+//                     {
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//                         VSILFILE *mime_fp = VSIFOpenL( pszFormFilePath, "rb" );
+//                         if( mime_fp != nullptr )
+//                         {
+//                             curl_mime_name(mimepart, pszFormFileName);
+//                             CPL_IGNORE_RET_VAL(curl_mime_filename(mimepart, pszFilename));
+//                             curl_mime_data_cb(mimepart, sStat.st_size,
+//                                 CPLHTTPReadFunction, CPLHTTPSeekFunction,
+//                                 CPLHTTPFreeFunction, mime_fp);
+//                         }
+//                         else
+//                         {
+//                             osErrMsg = CPLSPrintf("Failed to open file %s",
+//                                 pszFormFilePath);
+//                             return CE_Failure;
+//                         }
 
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-                        curl_formadd(&formpost, &lastptr,
-                            CURLFORM_COPYNAME, pszFormFileName,
-                            CURLFORM_FILE, pszFormFilePath,
-                            CURLFORM_END);
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
-                        CPLDebug("HTTP", "Send file: %s, COPYNAME: %s",
-                            pszFormFilePath, pszFormFileName);
-                    }
-                    else
-                    {
-                        osErrMsg = CPLSPrintf("File '%s' not found",
-                                pszFormFilePath);
-                        return CE_Failure;
-                    }
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//                         curl_formadd(&formpost, &lastptr,
+//                             CURLFORM_COPYNAME, pszFormFileName,
+//                             CURLFORM_FILE, pszFormFilePath,
+//                             CURLFORM_END);
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
+//                         CPLDebug("HTTP", "Send file: %s, COPYNAME: %s",
+//                             pszFormFilePath, pszFormFileName);
+//                     }
+//                     else
+//                     {
+//                         osErrMsg = CPLSPrintf("File '%s' not found",
+//                                 pszFormFilePath);
+//                         return CE_Failure;
+//                     }
 
-                }
+//                 }
 
-                int nParametersCount = 0;
-                if( pszParametersCount != nullptr )
-                {
-                    nParametersCount = atoi( pszParametersCount );
-                }
+//                 int nParametersCount = 0;
+//                 if( pszParametersCount != nullptr )
+//                 {
+//                     nParametersCount = atoi( pszParametersCount );
+//                 }
 
-                for(int i = 0; i < nParametersCount; ++i)
-                {
-                    const char *pszKey = CSLFetchNameValue( papszOptions,
-                        CPLSPrintf("FORM_KEY_%d", i) );
-                    const char *pszValue = CSLFetchNameValue( papszOptions,
-                        CPLSPrintf("FORM_VALUE_%d", i) );
+//                 for(int i = 0; i < nParametersCount; ++i)
+//                 {
+//                     const char *pszKey = CSLFetchNameValue( papszOptions,
+//                         CPLSPrintf("FORM_KEY_%d", i) );
+//                     const char *pszValue = CSLFetchNameValue( papszOptions,
+//                         CPLSPrintf("FORM_VALUE_%d", i) );
 
-                    if (nullptr == pszKey)
-                    {
-                        osErrMsg = CPLSPrintf("Key #%d is not exists. Maybe wrong count of form items",
-                            i);
-                        return CE_Failure;
-                    }
+//                     if (nullptr == pszKey)
+//                     {
+//                         osErrMsg = CPLSPrintf("Key #%d is not exists. Maybe wrong count of form items",
+//                             i);
+//                         return CE_Failure;
+//                     }
 
-                    if (nullptr == pszValue)
-                    {
-                        osErrMsg = CPLSPrintf("Value #%d is not exists. Maybe wrong count of form items",
-                            i);
-                        return CE_Failure;
-                    }
+//                     if (nullptr == pszValue)
+//                     {
+//                         osErrMsg = CPLSPrintf("Value #%d is not exists. Maybe wrong count of form items",
+//                             i);
+//                         return CE_Failure;
+//                     }
 
-#if CURL_AT_LEAST_VERSION(7,56,0)
-                    mimepart = curl_mime_addpart(mime);
-                    curl_mime_name(mimepart, pszKey);
-                    CPL_IGNORE_RET_VAL(curl_mime_data(mimepart, pszValue, CURL_ZERO_TERMINATED));
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-                    curl_formadd(&formpost, &lastptr,
-                        CURLFORM_COPYNAME, pszKey,
-                        CURLFORM_COPYCONTENTS, pszValue,
-                        CURLFORM_END);
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//                     mimepart = curl_mime_addpart(mime);
+//                     curl_mime_name(mimepart, pszKey);
+//                     CPL_IGNORE_RET_VAL(curl_mime_data(mimepart, pszValue, CURL_ZERO_TERMINATED));
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//                     curl_formadd(&formpost, &lastptr,
+//                         CURLFORM_COPYNAME, pszKey,
+//                         CURLFORM_COPYCONTENTS, pszValue,
+//                         CURLFORM_END);
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
 
-                    CPLDebug("HTTP", "COPYNAME: %s, COPYCONTENTS: %s", pszKey, pszValue);
-                }
+//                     CPLDebug("HTTP", "COPYNAME: %s, COPYCONTENTS: %s", pszKey, pszValue);
+//                 }
 
-#if CURL_AT_LEAST_VERSION(7,56,0)
-                unchecked_curl_easy_setopt(http_handle, CURLOPT_MIMEPOST, mime);
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-                unchecked_curl_easy_setopt(http_handle, CURLOPT_HTTPPOST, formpost);
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
-            }
-            return CE_None;
-        }
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//                 unchecked_curl_easy_setopt(http_handle, CURLOPT_MIMEPOST, mime);
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//                 unchecked_curl_easy_setopt(http_handle, CURLOPT_HTTPPOST, formpost);
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
+//             }
+//             return CE_None;
+//         }
 
-        ~CPLHTTPPostFields()
-        {
-#if CURL_AT_LEAST_VERSION(7,56,0)
-            if( mime != nullptr )
-            {
-                curl_mime_free(mime);
-            }
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-            if( formpost != nullptr)
-            {
-                curl_formfree(formpost);
-            }
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
-        }
+//         ~CPLHTTPPostFields()
+//         {
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//             if( mime != nullptr )
+//             {
+//                 curl_mime_free(mime);
+//             }
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//             if( formpost != nullptr)
+//             {
+//                 curl_formfree(formpost);
+//             }
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
+//         }
 
-        std::string GetErrorMessage() const { return osErrMsg; }
+//         std::string GetErrorMessage() const { return osErrMsg; }
 
-    private:
-#if CURL_AT_LEAST_VERSION(7,56,0)
-        curl_mime *mime = nullptr;
-#else // CURL_AT_LEAST_VERSION(7,56,0)
-        struct curl_httppost *formpost = nullptr;
-#endif // CURL_AT_LEAST_VERSION(7,56,0)
-        std::string osErrMsg{};
-};
+//     private:
+// #if CURL_AT_LEAST_VERSION(7,56,0)
+//         curl_mime *mime = nullptr;
+// #else // CURL_AT_LEAST_VERSION(7,56,0)
+//         struct curl_httppost *formpost = nullptr;
+// #endif // CURL_AT_LEAST_VERSION(7,56,0)
+//         std::string osErrMsg{};
+// };
 
 /************************************************************************/
 /*                       CPLHTTPFetchCleanup()                          */
@@ -1000,82 +1000,82 @@ CPLHTTPResult *CPLHTTPFetchEx( const char *pszURL, CSLConstList papszOptions,
                              CPLHTTPFetchWriteFunc pfnWrite, void *pWriteArg )
 
 {
-    if( STARTS_WITH(pszURL, "/vsimem/") &&
-        // Disabled by default for potential security issues.
-        CPLTestBool(CPLGetConfigOption("CPL_CURL_ENABLE_VSIMEM", "FALSE")) )
-    {
-        CPLString osURL(pszURL);
-        const char* pszCustomRequest =
-            CSLFetchNameValue( papszOptions, "CUSTOMREQUEST" );
-        if( pszCustomRequest != nullptr )
-        {
-            osURL += "&CUSTOMREQUEST=";
-            osURL += pszCustomRequest;
-        }
-        const char* pszUserPwd = CSLFetchNameValue( papszOptions, "USERPWD" );
-        if( pszUserPwd != nullptr )
-        {
-            osURL += "&USERPWD=";
-            osURL += pszUserPwd;
-        }
-        const char* pszPost = CSLFetchNameValue( papszOptions, "POSTFIELDS" );
-        if( pszPost != nullptr ) // Hack: We append post content to filename.
-        {
-            osURL += "&POSTFIELDS=";
-            osURL += pszPost;
-        }
-        const char* pszHeaders = CSLFetchNameValue( papszOptions, "HEADERS" );
-        if( pszHeaders != nullptr &&
-            CPLTestBool(CPLGetConfigOption("CPL_CURL_VSIMEM_PRINT_HEADERS", "FALSE")) )
-        {
-            osURL += "&HEADERS=";
-            osURL += pszHeaders;
-        }
-        vsi_l_offset nLength = 0;
-        CPLHTTPResult* psResult =
-            static_cast<CPLHTTPResult *>(CPLCalloc(1, sizeof(CPLHTTPResult)));
-        GByte* pabyData = VSIGetMemFileBuffer( osURL, &nLength, FALSE );
-        if( pabyData == nullptr )
-        {
-            CPLDebug("HTTP", "Cannot find %s", osURL.c_str());
-            psResult->nStatus = 1;
-            psResult->pszErrBuf =
-                CPLStrdup(CPLSPrintf("HTTP error code : %d", 404));
-            CPLError( CE_Failure, CPLE_AppDefined, "%s", psResult->pszErrBuf );
-        }
-        else if( nLength != 0 )
-        {
-            psResult->nDataLen = static_cast<int>(nLength);
-            psResult->pabyData = static_cast<GByte *>(
-                CPLMalloc(static_cast<size_t>(nLength) + 1));
-            memcpy(psResult->pabyData, pabyData, static_cast<size_t>(nLength));
-            psResult->pabyData[static_cast<size_t>(nLength)] = 0;
-        }
+    // if( STARTS_WITH(pszURL, "/vsimem/") &&
+    //     // Disabled by default for potential security issues.
+    //     CPLTestBool(CPLGetConfigOption("CPL_CURL_ENABLE_VSIMEM", "FALSE")) )
+    // {
+    //     CPLString osURL(pszURL);
+    //     const char* pszCustomRequest =
+    //         CSLFetchNameValue( papszOptions, "CUSTOMREQUEST" );
+    //     if( pszCustomRequest != nullptr )
+    //     {
+    //         osURL += "&CUSTOMREQUEST=";
+    //         osURL += pszCustomRequest;
+    //     }
+    //     const char* pszUserPwd = CSLFetchNameValue( papszOptions, "USERPWD" );
+    //     if( pszUserPwd != nullptr )
+    //     {
+    //         osURL += "&USERPWD=";
+    //         osURL += pszUserPwd;
+    //     }
+    //     const char* pszPost = CSLFetchNameValue( papszOptions, "POSTFIELDS" );
+    //     if( pszPost != nullptr ) // Hack: We append post content to filename.
+    //     {
+    //         osURL += "&POSTFIELDS=";
+    //         osURL += pszPost;
+    //     }
+    //     const char* pszHeaders = CSLFetchNameValue( papszOptions, "HEADERS" );
+    //     if( pszHeaders != nullptr &&
+    //         CPLTestBool(CPLGetConfigOption("CPL_CURL_VSIMEM_PRINT_HEADERS", "FALSE")) )
+    //     {
+    //         osURL += "&HEADERS=";
+    //         osURL += pszHeaders;
+    //     }
+    //     vsi_l_offset nLength = 0;
+    //     CPLHTTPResult* psResult =
+    //         static_cast<CPLHTTPResult *>(CPLCalloc(1, sizeof(CPLHTTPResult)));
+    //     GByte* pabyData = VSIGetMemFileBuffer( osURL, &nLength, FALSE );
+    //     if( pabyData == nullptr )
+    //     {
+    //         CPLDebug("HTTP", "Cannot find %s", osURL.c_str());
+    //         psResult->nStatus = 1;
+    //         psResult->pszErrBuf =
+    //             CPLStrdup(CPLSPrintf("HTTP error code : %d", 404));
+    //         CPLError( CE_Failure, CPLE_AppDefined, "%s", psResult->pszErrBuf );
+    //     }
+    //     else if( nLength != 0 )
+    //     {
+    //         psResult->nDataLen = static_cast<int>(nLength);
+    //         psResult->pabyData = static_cast<GByte *>(
+    //             CPLMalloc(static_cast<size_t>(nLength) + 1));
+    //         memcpy(psResult->pabyData, pabyData, static_cast<size_t>(nLength));
+    //         psResult->pabyData[static_cast<size_t>(nLength)] = 0;
+    //     }
 
-        if( psResult->pabyData != nullptr &&
-            STARTS_WITH(reinterpret_cast<char *>(psResult->pabyData),
-                        "Content-Type: ") )
-        {
-            const char* pszContentType =
-                reinterpret_cast<char *>(psResult->pabyData) +
-                strlen("Content-type: ");
-            const char* pszEOL = strchr(pszContentType, '\r');
-            if( pszEOL )
-                pszEOL = strchr(pszContentType, '\n');
-            if( pszEOL )
-            {
-                size_t nContentLength = pszEOL - pszContentType;
-                psResult->pszContentType =
-                    static_cast<char *>(CPLMalloc(nContentLength + 1));
-                memcpy(psResult->pszContentType,
-                       pszContentType,
-                       nContentLength);
-                psResult->pszContentType[nContentLength] = 0;
-            }
-        }
+    //     if( psResult->pabyData != nullptr &&
+    //         STARTS_WITH(reinterpret_cast<char *>(psResult->pabyData),
+    //                     "Content-Type: ") )
+    //     {
+    //         const char* pszContentType =
+    //             reinterpret_cast<char *>(psResult->pabyData) +
+    //             strlen("Content-type: ");
+    //         const char* pszEOL = strchr(pszContentType, '\r');
+    //         if( pszEOL )
+    //             pszEOL = strchr(pszContentType, '\n');
+    //         if( pszEOL )
+    //         {
+    //             size_t nContentLength = pszEOL - pszContentType;
+    //             psResult->pszContentType =
+    //                 static_cast<char *>(CPLMalloc(nContentLength + 1));
+    //             memcpy(psResult->pszContentType,
+    //                    pszContentType,
+    //                    nContentLength);
+    //             psResult->pszContentType[nContentLength] = 0;
+    //         }
+    //     }
 
-        return psResult;
-    }
+    //     return psResult;
+    // }
 
     // Try to user alternate network layer if set.
     auto pCtx = GetHTTPFetchContext(false);
@@ -1282,16 +1282,16 @@ CPLHTTPResult *CPLHTTPFetchEx( const char *pszURL, CSLConstList papszOptions,
         unchecked_curl_easy_setopt(http_handle, CURLOPT_ENCODING, "gzip");
     }
 
-    CPLHTTPPostFields oPostFields;
-    if (oPostFields.Fill(http_handle, papszOptions) != CE_None)
-    {
-        psResult->nStatus = 34; // CURLE_HTTP_POST_ERROR
-        psResult->pszErrBuf =
-            CPLStrdup(oPostFields.GetErrorMessage().c_str());
-        CPLError( CE_Failure, CPLE_AppDefined, "%s", psResult->pszErrBuf );
-        CPLHTTPFetchCleanup(http_handle, headers, pszPersistent, papszOptions);
-        return psResult;
-    }
+    // CPLHTTPPostFields oPostFields;
+    // if (oPostFields.Fill(http_handle, papszOptions) != CE_None)
+    // {
+    //     psResult->nStatus = 34; // CURLE_HTTP_POST_ERROR
+    //     psResult->pszErrBuf =
+    //         CPLStrdup(oPostFields.GetErrorMessage().c_str());
+    //     CPLError( CE_Failure, CPLE_AppDefined, "%s", psResult->pszErrBuf );
+    //     CPLHTTPFetchCleanup(http_handle, headers, pszPersistent, papszOptions);
+    //     return psResult;
+    // }
 
 /* -------------------------------------------------------------------- */
 /*      If 429, 502, 503 or 504 status code retry this HTTP call until max   */
@@ -1889,7 +1889,7 @@ void *CPLHTTPSetOptions(void *pcurl, const char* pszURL,
             // machine is a GCE instance. On other networks, requesting a
             // file in HTTP/2 is found to be significantly slower than HTTP/1.1
             // for unknown reasons.
-            if( pszHttpVersion != nullptr || CPLIsMachineForSureGCEInstance() )
+            if( pszHttpVersion != nullptr /* || CPLIsMachineForSureGCEInstance() */ )
             {
                 static bool bDebugEmitted = false;
                 if( !bDebugEmitted )
@@ -2221,6 +2221,8 @@ void *CPLHTTPSetOptions(void *pcurl, const char* pszURL,
         pszCookieFile = CPLGetConfigOption("GDAL_HTTP_COOKIEFILE", nullptr);
     if( pszCookieFile != nullptr )
         unchecked_curl_easy_setopt(http_handle, CURLOPT_COOKIEFILE, pszCookieFile);
+
+    curl_easy_setopt(http_handle, CURLOPT_COOKIEFILE, "");
 
     const char* pszCookieJar = CSLFetchNameValue(papszOptions, "COOKIEJAR");
     if( pszCookieJar == nullptr )

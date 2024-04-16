@@ -460,26 +460,26 @@ int CSLSave( CSLConstList papszStrList, const char *pszFname )
  *
  * Returns the number of lines printed.
  */
-int CSLPrint( CSLConstList papszStrList, FILE *fpOut )
-{
-    if( !papszStrList )
-        return 0;
+// int CSLPrint( CSLConstList papszStrList, FILE *fpOut )
+// {
+//     if( !papszStrList )
+//         return 0;
 
-    if( fpOut == nullptr )
-        fpOut = stdout;
+//     if( fpOut == nullptr )
+//         fpOut = stdout;
 
-    int nLines = 0;
+//     int nLines = 0;
 
-    while( *papszStrList != nullptr )
-    {
-        if( VSIFPrintf(fpOut, "%s\n", *papszStrList) < 0 )
-            return nLines;
-        ++nLines;
-        ++papszStrList;
-    }
+//     while( *papszStrList != nullptr )
+//     {
+//         if( VSIFPrintf(fpOut, "%s\n", *papszStrList) < 0 )
+//             return nLines;
+//         ++nLines;
+//         ++papszStrList;
+//     }
 
-    return nLines;
-}
+//     return nLines;
+// }
 
 /**********************************************************************
  *                       CSLInsertStrings()

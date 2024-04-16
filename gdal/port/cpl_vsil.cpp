@@ -143,13 +143,13 @@ char **VSIReadDirEx( const char *pszPath, int nMaxFiles )
  * to avoid opening non-existent files on slow filesystems. The return value shall be destroyed with CSLDestroy()
  * @since GDAL 3.2
  */
-char **VSISiblingFiles( const char *pszFilename)
-{
-    VSIFilesystemHandler *poFSHandler =
-        VSIFileManager::GetHandler( pszFilename );
+// char **VSISiblingFiles( const char *pszFilename)
+// {
+//     VSIFilesystemHandler *poFSHandler =
+//         VSIFileManager::GetHandler( pszFilename );
 
-    return poFSHandler->SiblingFiles( pszFilename );
-}
+//     return poFSHandler->SiblingFiles( pszFilename );
+// }
 
 /************************************************************************/
 /*                             VSIReadRecursive()                       */
@@ -186,141 +186,141 @@ typedef struct
  *
  */
 
-char **VSIReadDirRecursive( const char *pszPathIn )
-{
-    CPLStringList oFiles;
-    char **papszFiles = nullptr;
-    VSIStatBufL psStatBuf;
-    CPLString osTemp1;
-    CPLString osTemp2;
-    int i = 0;
-    int nCount = -1;
+// char **VSIReadDirRecursive( const char *pszPathIn )
+// {
+//     CPLStringList oFiles;
+//     char **papszFiles = nullptr;
+//     VSIStatBufL psStatBuf;
+//     CPLString osTemp1;
+//     CPLString osTemp2;
+//     int i = 0;
+//     int nCount = -1;
 
-    std::vector<VSIReadDirRecursiveTask> aoStack;
-    char* pszPath = CPLStrdup(pszPathIn);
-    char* pszDisplayedPath = nullptr;
+//     std::vector<VSIReadDirRecursiveTask> aoStack;
+//     char* pszPath = CPLStrdup(pszPathIn);
+//     char* pszDisplayedPath = nullptr;
 
-    while( true )
-    {
-        if( nCount < 0 )
-        {
-            // Get listing.
-            papszFiles = VSIReadDir( pszPath );
+//     while( true )
+//     {
+//         if( nCount < 0 )
+//         {
+//             // Get listing.
+//             papszFiles = VSIReadDir( pszPath );
 
-            // Get files and directories inside listing.
-            nCount = papszFiles ? CSLCount( papszFiles ) : 0;
-            i = 0;
-        }
+//             // Get files and directories inside listing.
+//             nCount = papszFiles ? CSLCount( papszFiles ) : 0;
+//             i = 0;
+//         }
 
-        for( ; i < nCount; i++ )
-        {
-            // Do not recurse up the tree.
-            if( EQUAL(".", papszFiles[i]) || EQUAL("..", papszFiles[i]) )
-              continue;
+//         for( ; i < nCount; i++ )
+//         {
+//             // Do not recurse up the tree.
+//             if( EQUAL(".", papszFiles[i]) || EQUAL("..", papszFiles[i]) )
+//               continue;
 
-            // Build complete file name for stat.
-            osTemp1.clear();
-            osTemp1.append( pszPath );
-            if( !osTemp1.empty() && osTemp1.back() != '/' )
-                osTemp1.append( "/" );
-            osTemp1.append( papszFiles[i] );
+//             // Build complete file name for stat.
+//             osTemp1.clear();
+//             osTemp1.append( pszPath );
+//             if( !osTemp1.empty() && osTemp1.back() != '/' )
+//                 osTemp1.append( "/" );
+//             osTemp1.append( papszFiles[i] );
 
-            // If is file, add it.
-            if( VSIStatL( osTemp1.c_str(), &psStatBuf ) != 0 )
-                continue;
+//             // If is file, add it.
+//             if( VSIStatL( osTemp1.c_str(), &psStatBuf ) != 0 )
+//                 continue;
 
-            if( VSI_ISREG( psStatBuf.st_mode ) )
-            {
-                if( pszDisplayedPath )
-                {
-                    osTemp1.clear();
-                    osTemp1.append( pszDisplayedPath );
-                    if( !osTemp1.empty() && osTemp1.back() != '/' )
-                        osTemp1.append( "/" );
-                    osTemp1.append( papszFiles[i] );
-                    oFiles.AddString( osTemp1 );
-                }
-                else
-                    oFiles.AddString( papszFiles[i] );
-            }
-            else if( VSI_ISDIR( psStatBuf.st_mode ) )
-            {
-                // Add directory entry.
-                osTemp2.clear();
-                if( pszDisplayedPath )
-                {
-                    osTemp2.append( pszDisplayedPath );
-                    osTemp2.append( "/" );
-                }
-                osTemp2.append( papszFiles[i] );
-                if( !osTemp2.empty() && osTemp2.back() != '/' )
-                    osTemp2.append( "/" );
-                oFiles.AddString( osTemp2.c_str() );
+//             if( VSI_ISREG( psStatBuf.st_mode ) )
+//             {
+//                 if( pszDisplayedPath )
+//                 {
+//                     osTemp1.clear();
+//                     osTemp1.append( pszDisplayedPath );
+//                     if( !osTemp1.empty() && osTemp1.back() != '/' )
+//                         osTemp1.append( "/" );
+//                     osTemp1.append( papszFiles[i] );
+//                     oFiles.AddString( osTemp1 );
+//                 }
+//                 else
+//                     oFiles.AddString( papszFiles[i] );
+//             }
+//             else if( VSI_ISDIR( psStatBuf.st_mode ) )
+//             {
+//                 // Add directory entry.
+//                 osTemp2.clear();
+//                 if( pszDisplayedPath )
+//                 {
+//                     osTemp2.append( pszDisplayedPath );
+//                     osTemp2.append( "/" );
+//                 }
+//                 osTemp2.append( papszFiles[i] );
+//                 if( !osTemp2.empty() && osTemp2.back() != '/' )
+//                     osTemp2.append( "/" );
+//                 oFiles.AddString( osTemp2.c_str() );
 
-                VSIReadDirRecursiveTask sTask;
-                sTask.papszFiles = papszFiles;
-                sTask.nCount = nCount;
-                sTask.i = i;
-                sTask.pszPath = CPLStrdup(pszPath);
-                sTask.pszDisplayedPath =
-                    pszDisplayedPath ? CPLStrdup(pszDisplayedPath) : nullptr;
-                aoStack.push_back(sTask);
+//                 VSIReadDirRecursiveTask sTask;
+//                 sTask.papszFiles = papszFiles;
+//                 sTask.nCount = nCount;
+//                 sTask.i = i;
+//                 sTask.pszPath = CPLStrdup(pszPath);
+//                 sTask.pszDisplayedPath =
+//                     pszDisplayedPath ? CPLStrdup(pszDisplayedPath) : nullptr;
+//                 aoStack.push_back(sTask);
 
-                CPLFree(pszPath);
-                pszPath = CPLStrdup( osTemp1.c_str() );
+//                 CPLFree(pszPath);
+//                 pszPath = CPLStrdup( osTemp1.c_str() );
 
-                char* pszDisplayedPathNew = nullptr;
-                if( pszDisplayedPath )
-                {
-                    pszDisplayedPathNew =
-                        CPLStrdup(
-                            CPLSPrintf("%s/%s",
-                                       pszDisplayedPath, papszFiles[i]));
-                }
-                else
-                {
-                    pszDisplayedPathNew = CPLStrdup( papszFiles[i] );
-                }
-                CPLFree(pszDisplayedPath);
-                pszDisplayedPath = pszDisplayedPathNew;
+//                 char* pszDisplayedPathNew = nullptr;
+//                 if( pszDisplayedPath )
+//                 {
+//                     pszDisplayedPathNew =
+//                         CPLStrdup(
+//                             CPLSPrintf("%s/%s",
+//                                        pszDisplayedPath, papszFiles[i]));
+//                 }
+//                 else
+//                 {
+//                     pszDisplayedPathNew = CPLStrdup( papszFiles[i] );
+//                 }
+//                 CPLFree(pszDisplayedPath);
+//                 pszDisplayedPath = pszDisplayedPathNew;
 
-                i = 0;
-                papszFiles = nullptr;
-                nCount = -1;
+//                 i = 0;
+//                 papszFiles = nullptr;
+//                 nCount = -1;
 
-                break;
-            }
-        }
+//                 break;
+//             }
+//         }
 
-        if( nCount >= 0 )
-        {
-            CSLDestroy( papszFiles );
+//         if( nCount >= 0 )
+//         {
+//             CSLDestroy( papszFiles );
 
-            if( !aoStack.empty() )
-            {
-                const int iLast = static_cast<int>(aoStack.size()) - 1;
-                CPLFree(pszPath);
-                CPLFree(pszDisplayedPath);
-                nCount = aoStack[iLast].nCount;
-                papszFiles = aoStack[iLast].papszFiles;
-                i = aoStack[iLast].i + 1;
-                pszPath = aoStack[iLast].pszPath;
-                pszDisplayedPath = aoStack[iLast].pszDisplayedPath;
+//             if( !aoStack.empty() )
+//             {
+//                 const int iLast = static_cast<int>(aoStack.size()) - 1;
+//                 CPLFree(pszPath);
+//                 CPLFree(pszDisplayedPath);
+//                 nCount = aoStack[iLast].nCount;
+//                 papszFiles = aoStack[iLast].papszFiles;
+//                 i = aoStack[iLast].i + 1;
+//                 pszPath = aoStack[iLast].pszPath;
+//                 pszDisplayedPath = aoStack[iLast].pszDisplayedPath;
 
-                aoStack.resize(iLast);
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
+//                 aoStack.resize(iLast);
+//             }
+//             else
+//             {
+//                 break;
+//             }
+//         }
+//     }
 
-    CPLFree(pszPath);
-    CPLFree(pszDisplayedPath);
+//     CPLFree(pszPath);
+//     CPLFree(pszDisplayedPath);
 
-    return oFiles.StealList();
-}
+//     return oFiles.StealList();
+// }
 
 /************************************************************************/
 /*                             CPLReadDir()                             */
@@ -368,15 +368,15 @@ char **CPLReadDir( const char *pszPath )
  *
  */
 
-VSIDIR *VSIOpenDir( const char *pszPath,
-                    int nRecurseDepth,
-                    const char* const *papszOptions)
-{
-    VSIFilesystemHandler *poFSHandler =
-        VSIFileManager::GetHandler( pszPath );
+// VSIDIR *VSIOpenDir( const char *pszPath,
+//                     int nRecurseDepth,
+//                     const char* const *papszOptions)
+// {
+//     VSIFilesystemHandler *poFSHandler =
+//         VSIFileManager::GetHandler( pszPath );
 
-    return poFSHandler->OpenDir( pszPath, nRecurseDepth, papszOptions );
-}
+//     return poFSHandler->OpenDir( pszPath, nRecurseDepth, papszOptions );
+// }
 
 /************************************************************************/
 /*                          VSIGetNextDirEntry()                        */
@@ -405,10 +405,10 @@ VSIDIR *VSIOpenDir( const char *pszPath,
  *
  */
 
-const VSIDIREntry *VSIGetNextDirEntry(VSIDIR* dir)
-{
-    return dir->NextDirEntry();
-}
+// const VSIDIREntry *VSIGetNextDirEntry(VSIDIR* dir)
+// {
+//     return dir->NextDirEntry();
+// }
 
 /************************************************************************/
 /*                             VSICloseDir()                            */
@@ -472,38 +472,38 @@ int VSIMkdir( const char *pszPathname, long mode )
  * @since GDAL 2.3
  */
 
-int VSIMkdirRecursive( const char *pszPathname, long mode )
-{
-    if( pszPathname == nullptr || pszPathname[0] == '\0' ||
-        strncmp("/", pszPathname, 2) == 0 )
-    {
-        return -1;
-    }
+// int VSIMkdirRecursive( const char *pszPathname, long mode )
+// {
+//     if( pszPathname == nullptr || pszPathname[0] == '\0' ||
+//         strncmp("/", pszPathname, 2) == 0 )
+//     {
+//         return -1;
+//     }
 
-    const CPLString osPathname(pszPathname);
-    VSIStatBufL sStat;
-    if( VSIStatL(osPathname, &sStat) == 0 &&
-        VSI_ISDIR(sStat.st_mode) )
-    {
-        return 0;
-    }
-    const CPLString osParentPath(CPLGetPath(osPathname));
+//     const CPLString osPathname(pszPathname);
+//     VSIStatBufL sStat;
+//     if( VSIStatL(osPathname, &sStat) == 0 &&
+//         VSI_ISDIR(sStat.st_mode) )
+//     {
+//         return 0;
+//     }
+//     const CPLString osParentPath(CPLGetPath(osPathname));
 
-    // Prevent crazy paths from recursing forever.
-    if( osParentPath == osPathname ||
-        osParentPath.length() >= osPathname.length() )
-    {
-        return -1;
-    }
+//     // Prevent crazy paths from recursing forever.
+//     if( osParentPath == osPathname ||
+//         osParentPath.length() >= osPathname.length() )
+//     {
+//         return -1;
+//     }
 
-    if( VSIStatL(osParentPath, &sStat) != 0 )
-    {
-        if( VSIMkdirRecursive(osParentPath, mode) != 0 )
-            return -1;
-    }
+//     if( VSIStatL(osParentPath, &sStat) != 0 )
+//     {
+//         if( VSIMkdirRecursive(osParentPath, mode) != 0 )
+//             return -1;
+//     }
 
-    return VSIMkdir(osPathname, mode);
-}
+//     return VSIMkdir(osPathname, mode);
+// }
 
 /************************************************************************/
 /*                             VSIUnlink()                              */
@@ -680,37 +680,37 @@ int VSIRename( const char * oldpath, const char * newpath )
  * @since GDAL 2.4
  */
 
-int VSISync( const char* pszSource, const char* pszTarget,
-              const char* const * papszOptions,
-              GDALProgressFunc pProgressFunc,
-              void *pProgressData,
-              char*** ppapszOutputs  )
+// int VSISync( const char* pszSource, const char* pszTarget,
+//               const char* const * papszOptions,
+//               GDALProgressFunc pProgressFunc,
+//               void *pProgressData,
+//               char*** ppapszOutputs  )
 
-{
-    if( pszSource[0] == '\0' || pszTarget[0] == '\0' )
-    {
-        return FALSE;
-    }
+// {
+//     if( pszSource[0] == '\0' || pszTarget[0] == '\0' )
+//     {
+//         return FALSE;
+//     }
 
-    VSIFilesystemHandler *poFSHandlerSource =
-        VSIFileManager::GetHandler( pszSource );
-    VSIFilesystemHandler *poFSHandlerTarget =
-        VSIFileManager::GetHandler( pszTarget );
-    VSIFilesystemHandler *poFSHandlerLocal =
-        VSIFileManager::GetHandler( "" );
-    VSIFilesystemHandler *poFSHandlerMem =
-        VSIFileManager::GetHandler( "/vsimem/" );
-    VSIFilesystemHandler* poFSHandler = poFSHandlerSource;
-    if( poFSHandlerTarget != poFSHandlerLocal &&
-        poFSHandlerTarget != poFSHandlerMem )
-    {
-        poFSHandler = poFSHandlerTarget;
-    }
+//     VSIFilesystemHandler *poFSHandlerSource =
+//         VSIFileManager::GetHandler( pszSource );
+//     VSIFilesystemHandler *poFSHandlerTarget =
+//         VSIFileManager::GetHandler( pszTarget );
+//     VSIFilesystemHandler *poFSHandlerLocal =
+//         VSIFileManager::GetHandler( "" );
+//     VSIFilesystemHandler *poFSHandlerMem =
+//         VSIFileManager::GetHandler( "/vsimem/" );
+//     VSIFilesystemHandler* poFSHandler = poFSHandlerSource;
+//     if( poFSHandlerTarget != poFSHandlerLocal &&
+//         poFSHandlerTarget != poFSHandlerMem )
+//     {
+//         poFSHandler = poFSHandlerTarget;
+//     }
 
-    return poFSHandler->Sync( pszSource, pszTarget, papszOptions,
-                               pProgressFunc, pProgressData, ppapszOutputs ) ?
-                TRUE : FALSE;
-}
+//     return poFSHandler->Sync( pszSource, pszTarget, papszOptions,
+//                                pProgressFunc, pProgressData, ppapszOutputs ) ?
+//                 TRUE : FALSE;
+// }
 
 /************************************************************************/
 /*                              VSIRmdir()                              */
@@ -757,17 +757,17 @@ int VSIRmdir( const char * pszDirname )
  * @since GDAL 2.3
  */
 
-int VSIRmdirRecursive( const char* pszDirname )
-{
-    if( pszDirname == nullptr || pszDirname[0] == '\0' ||
-        strncmp("/", pszDirname, 2) == 0 )
-    {
-        return -1;
-    }
-    VSIFilesystemHandler *poFSHandler =
-        VSIFileManager::GetHandler( pszDirname );
-    return poFSHandler->RmdirRecursive( pszDirname );
-}
+// int VSIRmdirRecursive( const char* pszDirname )
+// {
+//     if( pszDirname == nullptr || pszDirname[0] == '\0' ||
+//         strncmp("/", pszDirname, 2) == 0 )
+//     {
+//         return -1;
+//     }
+//     VSIFilesystemHandler *poFSHandler =
+//         VSIFileManager::GetHandler( pszDirname );
+//     return poFSHandler->RmdirRecursive( pszDirname );
+// }
 
 /************************************************************************/
 /*                              VSIStatL()                              */
@@ -794,11 +794,11 @@ int VSIRmdirRecursive( const char* pszDirname )
  * @return 0 on success or -1 on an error.
  */
 
-int VSIStatL( const char * pszFilename, VSIStatBufL *psStatBuf )
+// int VSIStatL( const char * pszFilename, VSIStatBufL *psStatBuf )
 
-{
-    return VSIStatExL(pszFilename, psStatBuf, 0);
-}
+// {
+//     return VSIStatExL(pszFilename, psStatBuf, 0);
+// }
 
 /************************************************************************/
 /*                            VSIStatExL()                              */
@@ -833,32 +833,32 @@ int VSIStatL( const char * pszFilename, VSIStatBufL *psStatBuf )
  * @since GDAL 1.8.0
  */
 
-int VSIStatExL( const char * pszFilename, VSIStatBufL *psStatBuf, int nFlags )
+// int VSIStatExL( const char * pszFilename, VSIStatBufL *psStatBuf, int nFlags )
 
-{
-    char szAltPath[4] = { '\0' };
+// {
+//     char szAltPath[4] = { '\0' };
 
-    // Enable to work on "C:" as if it were "C:\".
-    if( pszFilename[0] != '\0' && pszFilename[1] == ':' &&
-        pszFilename[2] == '\0' )
-    {
-        szAltPath[0] = pszFilename[0];
-        szAltPath[1] = pszFilename[1];
-        szAltPath[2] = '\\';
-        szAltPath[3] = '\0';
+//     // Enable to work on "C:" as if it were "C:\".
+//     if( pszFilename[0] != '\0' && pszFilename[1] == ':' &&
+//         pszFilename[2] == '\0' )
+//     {
+//         szAltPath[0] = pszFilename[0];
+//         szAltPath[1] = pszFilename[1];
+//         szAltPath[2] = '\\';
+//         szAltPath[3] = '\0';
 
-        pszFilename = szAltPath;
-    }
+//         pszFilename = szAltPath;
+//     }
 
-    VSIFilesystemHandler *poFSHandler =
-        VSIFileManager::GetHandler( pszFilename );
+//     VSIFilesystemHandler *poFSHandler =
+//         VSIFileManager::GetHandler( pszFilename );
 
-    if( nFlags == 0 )
-        nFlags = VSI_STAT_EXISTS_FLAG | VSI_STAT_NATURE_FLAG |
-            VSI_STAT_SIZE_FLAG;
+//     if( nFlags == 0 )
+//         nFlags = VSI_STAT_EXISTS_FLAG | VSI_STAT_NATURE_FLAG |
+//             VSI_STAT_SIZE_FLAG;
 
-    return poFSHandler->Stat( pszFilename, psStatBuf, nFlags );
-}
+//     return poFSHandler->Stat( pszFilename, psStatBuf, nFlags );
+// }
 
 
 /************************************************************************/
@@ -1173,181 +1173,181 @@ VSIVirtualHandle *VSIFilesystemHandler::Open( const char *pszFilename,
 /*                               Sync()                                 */
 /************************************************************************/
 
-bool VSIFilesystemHandler::Sync( const char* pszSource, const char* pszTarget,
-                            const char* const * papszOptions,
-                            GDALProgressFunc pProgressFunc,
-                            void *pProgressData,
-                            char*** ppapszOutputs  )
-{
-    if( ppapszOutputs )
-    {
-        *ppapszOutputs = nullptr;
-    }
+// bool VSIFilesystemHandler::Sync( const char* pszSource, const char* pszTarget,
+//                             const char* const * papszOptions,
+//                             GDALProgressFunc pProgressFunc,
+//                             void *pProgressData,
+//                             char*** ppapszOutputs  )
+// {
+//     if( ppapszOutputs )
+//     {
+//         *ppapszOutputs = nullptr;
+//     }
 
-    VSIStatBufL sSource;
-    CPLString osSource(pszSource);
-    CPLString osSourceWithoutSlash(pszSource);
-    if( osSourceWithoutSlash.back() == '/' )
-    {
-        osSourceWithoutSlash.resize(osSourceWithoutSlash.size()-1);
-    }
-    if( VSIStatL(osSourceWithoutSlash, &sSource) < 0 )
-    {
-        CPLError(CE_Failure, CPLE_FileIO, "%s does not exist", pszSource);
-        return false;
-    }
+//     VSIStatBufL sSource;
+//     CPLString osSource(pszSource);
+//     CPLString osSourceWithoutSlash(pszSource);
+//     if( osSourceWithoutSlash.back() == '/' )
+//     {
+//         osSourceWithoutSlash.resize(osSourceWithoutSlash.size()-1);
+//     }
+//     if( VSIStatL(osSourceWithoutSlash, &sSource) < 0 )
+//     {
+//         CPLError(CE_Failure, CPLE_FileIO, "%s does not exist", pszSource);
+//         return false;
+//     }
 
-    if( VSI_ISDIR(sSource.st_mode) )
-    {
-        CPLString osTargetDir(pszTarget);
-        if( osSource.back() != '/' )
-        {
-            osTargetDir = CPLFormFilename(osTargetDir,
-                                          CPLGetFilename(pszSource), nullptr);
-        }
+//     if( VSI_ISDIR(sSource.st_mode) )
+//     {
+//         CPLString osTargetDir(pszTarget);
+//         if( osSource.back() != '/' )
+//         {
+//             osTargetDir = CPLFormFilename(osTargetDir,
+//                                           CPLGetFilename(pszSource), nullptr);
+//         }
 
-        VSIStatBufL sTarget;
-        bool ret = true;
-        if( VSIStatL(osTargetDir, &sTarget) < 0 )
-        {
-            if( VSIMkdirRecursive(osTargetDir, 0755) < 0 )
-            {
-                CPLError(CE_Failure, CPLE_FileIO,
-                         "Cannot create directory %s", osTargetDir.c_str());
-                return false;
-            }
-        }
+//         VSIStatBufL sTarget;
+//         bool ret = true;
+//         if( VSIStatL(osTargetDir, &sTarget) < 0 )
+//         {
+//             if( VSIMkdirRecursive(osTargetDir, 0755) < 0 )
+//             {
+//                 CPLError(CE_Failure, CPLE_FileIO,
+//                          "Cannot create directory %s", osTargetDir.c_str());
+//                 return false;
+//             }
+//         }
 
-        if( !CPLFetchBool(papszOptions, "STOP_ON_DIR", false) )
-        {
-            CPLStringList aosChildOptions(CSLDuplicate(papszOptions));
-            if( !CPLFetchBool(papszOptions, "RECURSIVE", true) )
-            {
-                aosChildOptions.SetNameValue("RECURSIVE", nullptr);
-                aosChildOptions.AddString("STOP_ON_DIR=TRUE");
-            }
+//         if( !CPLFetchBool(papszOptions, "STOP_ON_DIR", false) )
+//         {
+//             CPLStringList aosChildOptions(CSLDuplicate(papszOptions));
+//             if( !CPLFetchBool(papszOptions, "RECURSIVE", true) )
+//             {
+//                 aosChildOptions.SetNameValue("RECURSIVE", nullptr);
+//                 aosChildOptions.AddString("STOP_ON_DIR=TRUE");
+//             }
 
-            char** papszSrcFiles = VSIReadDir(osSourceWithoutSlash);
-            int nFileCount = 0;
-            for( auto iter = papszSrcFiles ; iter && *iter; ++iter )
-            {
-                if( strcmp(*iter, ".") != 0 && strcmp(*iter, "..") != 0 )
-                {
-                    nFileCount ++;
-                }
-            }
-            int iFile = 0;
-            for( auto iter = papszSrcFiles ; iter && *iter; ++iter, ++iFile )
-            {
-                if( strcmp(*iter, ".") == 0 || strcmp(*iter, "..") == 0 )
-                {
-                    continue;
-                }
-                CPLString osSubSource(
-                    CPLFormFilename(osSourceWithoutSlash, *iter, nullptr) );
-                CPLString osSubTarget(
-                    CPLFormFilename(osTargetDir, *iter, nullptr) );
-                // coverity[divide_by_zero]
-                void* pScaledProgress = GDALCreateScaledProgress(
-                    double(iFile) / nFileCount, double(iFile + 1) / nFileCount,
-                    pProgressFunc, pProgressData);
-                ret = Sync( (osSubSource + '/').c_str(), osSubTarget,
-                            aosChildOptions.List(),
-                            GDALScaledProgress, pScaledProgress,
-                            nullptr );
-                GDALDestroyScaledProgress(pScaledProgress);
-                if( !ret )
-                {
-                    break;
-                }
-            }
-            CSLDestroy(papszSrcFiles);
-        }
-        return ret;
-    }
+//             char** papszSrcFiles = VSIReadDir(osSourceWithoutSlash);
+//             int nFileCount = 0;
+//             for( auto iter = papszSrcFiles ; iter && *iter; ++iter )
+//             {
+//                 if( strcmp(*iter, ".") != 0 && strcmp(*iter, "..") != 0 )
+//                 {
+//                     nFileCount ++;
+//                 }
+//             }
+//             int iFile = 0;
+//             for( auto iter = papszSrcFiles ; iter && *iter; ++iter, ++iFile )
+//             {
+//                 if( strcmp(*iter, ".") == 0 || strcmp(*iter, "..") == 0 )
+//                 {
+//                     continue;
+//                 }
+//                 CPLString osSubSource(
+//                     CPLFormFilename(osSourceWithoutSlash, *iter, nullptr) );
+//                 CPLString osSubTarget(
+//                     CPLFormFilename(osTargetDir, *iter, nullptr) );
+//                 // coverity[divide_by_zero]
+//                 void* pScaledProgress = GDALCreateScaledProgress(
+//                     double(iFile) / nFileCount, double(iFile + 1) / nFileCount,
+//                     pProgressFunc, pProgressData);
+//                 ret = Sync( (osSubSource + '/').c_str(), osSubTarget,
+//                             aosChildOptions.List(),
+//                             GDALScaledProgress, pScaledProgress,
+//                             nullptr );
+//                 GDALDestroyScaledProgress(pScaledProgress);
+//                 if( !ret )
+//                 {
+//                     break;
+//                 }
+//             }
+//             CSLDestroy(papszSrcFiles);
+//         }
+//         return ret;
+//     }
 
-    VSIStatBufL sTarget;
-    CPLString osTarget(pszTarget);
-    if( VSIStatL(osTarget, &sTarget) == 0 )
-    {
-        bool bTargetIsFile = true;
-        if ( VSI_ISDIR(sTarget.st_mode) )
-        {
-            osTarget = CPLFormFilename(osTarget,
-                                       CPLGetFilename(pszSource), nullptr);
-            bTargetIsFile = VSIStatL(osTarget, &sTarget) == 0 && 
-                            !CPL_TO_BOOL(VSI_ISDIR(sTarget.st_mode));
-        }
-        if( bTargetIsFile )
-        {
-            if( sSource.st_size == sTarget.st_size &&
-                sSource.st_mtime == sTarget.st_mtime &&
-                sSource.st_mtime != 0 )
-            {
-                CPLDebug("VSI", "%s and %s have same size and modification "
-                         "date. Skipping copying",
-                         osSourceWithoutSlash.c_str(),
-                         osTarget.c_str());
-                return true;
-            }
-        }
-    }
+//     VSIStatBufL sTarget;
+//     CPLString osTarget(pszTarget);
+//     if( VSIStatL(osTarget, &sTarget) == 0 )
+//     {
+//         bool bTargetIsFile = true;
+//         if ( VSI_ISDIR(sTarget.st_mode) )
+//         {
+//             osTarget = CPLFormFilename(osTarget,
+//                                        CPLGetFilename(pszSource), nullptr);
+//             bTargetIsFile = VSIStatL(osTarget, &sTarget) == 0 && 
+//                             !CPL_TO_BOOL(VSI_ISDIR(sTarget.st_mode));
+//         }
+//         if( bTargetIsFile )
+//         {
+//             if( sSource.st_size == sTarget.st_size &&
+//                 sSource.st_mtime == sTarget.st_mtime &&
+//                 sSource.st_mtime != 0 )
+//             {
+//                 CPLDebug("VSI", "%s and %s have same size and modification "
+//                          "date. Skipping copying",
+//                          osSourceWithoutSlash.c_str(),
+//                          osTarget.c_str());
+//                 return true;
+//             }
+//         }
+//     }
 
-    VSILFILE* fpIn = VSIFOpenExL(osSourceWithoutSlash, "rb", TRUE);
-    if( fpIn == nullptr )
-    {
-        CPLError(CE_Failure, CPLE_FileIO, "Cannot open %s",
-                 osSourceWithoutSlash.c_str());
-        return false;
-    }
+//     VSILFILE* fpIn = VSIFOpenExL(osSourceWithoutSlash, "rb", TRUE);
+//     if( fpIn == nullptr )
+//     {
+//         CPLError(CE_Failure, CPLE_FileIO, "Cannot open %s",
+//                  osSourceWithoutSlash.c_str());
+//         return false;
+//     }
 
-    VSILFILE* fpOut = VSIFOpenExL(osTarget.c_str(), "wb", TRUE);
-    if( fpOut == nullptr )
-    {
-        CPLError(CE_Failure, CPLE_FileIO, "Cannot create %s", osTarget.c_str());
-        VSIFCloseL(fpIn);
-        return false;
-    }
+//     VSILFILE* fpOut = VSIFOpenExL(osTarget.c_str(), "wb", TRUE);
+//     if( fpOut == nullptr )
+//     {
+//         CPLError(CE_Failure, CPLE_FileIO, "Cannot create %s", osTarget.c_str());
+//         VSIFCloseL(fpIn);
+//         return false;
+//     }
 
-    bool ret = true;
-    constexpr size_t nBufferSize = 10 * 4096;
-    std::vector<GByte> abyBuffer(nBufferSize, 0);
-    GUIntBig nOffset = 0;
-    CPLString osMsg;
-    osMsg.Printf("Copying of %s", osSourceWithoutSlash.c_str());
-    while( true )
-    {
-        size_t nRead = VSIFReadL(&abyBuffer[0], 1, nBufferSize, fpIn);
-        size_t nWritten = VSIFWriteL(&abyBuffer[0], 1, nRead, fpOut);
-        if( nWritten != nRead )
-        {
-            CPLError(CE_Failure, CPLE_FileIO,
-                     "Copying of %s to %s failed",
-                     osSourceWithoutSlash.c_str(), osTarget.c_str());
-            ret = false;
-            break;
-        }
-        nOffset += nRead;
-        if( pProgressFunc && !pProgressFunc(
-                double(nOffset) / sSource.st_size, osMsg.c_str(),
-                pProgressData) )
-        {
-            ret = false;
-            break;
-        }
-        if( nRead < nBufferSize )
-        {
-            break;
-        }
-    }
+//     bool ret = true;
+//     constexpr size_t nBufferSize = 10 * 4096;
+//     std::vector<GByte> abyBuffer(nBufferSize, 0);
+//     GUIntBig nOffset = 0;
+//     CPLString osMsg;
+//     osMsg.Printf("Copying of %s", osSourceWithoutSlash.c_str());
+//     while( true )
+//     {
+//         size_t nRead = VSIFReadL(&abyBuffer[0], 1, nBufferSize, fpIn);
+//         size_t nWritten = VSIFWriteL(&abyBuffer[0], 1, nRead, fpOut);
+//         if( nWritten != nRead )
+//         {
+//             CPLError(CE_Failure, CPLE_FileIO,
+//                      "Copying of %s to %s failed",
+//                      osSourceWithoutSlash.c_str(), osTarget.c_str());
+//             ret = false;
+//             break;
+//         }
+//         nOffset += nRead;
+//         if( pProgressFunc && !pProgressFunc(
+//                 double(nOffset) / sSource.st_size, osMsg.c_str(),
+//                 pProgressData) )
+//         {
+//             ret = false;
+//             break;
+//         }
+//         if( nRead < nBufferSize )
+//         {
+//             break;
+//         }
+//     }
 
-    VSIFCloseL(fpIn);
-    if( VSIFCloseL(fpOut) != 0 )
-    {
-        ret = false;
-    }
-    return ret;
-}
+//     VSIFCloseL(fpIn);
+//     if( VSIFCloseL(fpOut) != 0 )
+//     {
+//         ret = false;
+//     }
+//     return ret;
+// }
 
 /************************************************************************/
 /*                            VSIDIREntry()                             */
@@ -1437,117 +1437,117 @@ VSIDIRGeneric::~VSIDIRGeneric()
 /*                            OpenDir()                                 */
 /************************************************************************/
 
-VSIDIR* VSIFilesystemHandler::OpenDir( const char *pszPath,
-                                       int nRecurseDepth,
-                                       const char* const *)
-{
-    char** papszContent = VSIReadDir(pszPath);
-    VSIStatBufL sStatL;
-    if( papszContent == nullptr &&
-        (VSIStatL(pszPath, &sStatL) != 0 || !VSI_ISDIR(sStatL.st_mode)) )
-    {
-        return nullptr;
-    }
-    VSIDIRGeneric* dir = new VSIDIRGeneric(this);
-    dir->osRootPath = pszPath;
-    dir->nRecurseDepth = nRecurseDepth;
-    dir->papszContent = papszContent;
-    return dir;
-}
+// VSIDIR* VSIFilesystemHandler::OpenDir( const char *pszPath,
+//                                        int nRecurseDepth,
+//                                        const char* const *)
+// {
+//     char** papszContent = VSIReadDir(pszPath);
+//     VSIStatBufL sStatL;
+//     if( papszContent == nullptr &&
+//         (VSIStatL(pszPath, &sStatL) != 0 || !VSI_ISDIR(sStatL.st_mode)) )
+//     {
+//         return nullptr;
+//     }
+//     VSIDIRGeneric* dir = new VSIDIRGeneric(this);
+//     dir->osRootPath = pszPath;
+//     dir->nRecurseDepth = nRecurseDepth;
+//     dir->papszContent = papszContent;
+//     return dir;
+// }
 
 /************************************************************************/
 /*                           NextDirEntry()                             */
 /************************************************************************/
 
-const VSIDIREntry* VSIDIRGeneric::NextDirEntry()
-{
-    if( VSI_ISDIR(entry.nMode) && nRecurseDepth != 0 )
-    {
-        CPLString osCurFile(osRootPath);
-        if( !osCurFile.empty() )
-            osCurFile += '/';
-        osCurFile += entry.pszName;
-        auto subdir = static_cast<VSIDIRGeneric*>(
-            poFS->VSIFilesystemHandler::OpenDir(osCurFile,
-                nRecurseDepth - 1, nullptr));
-        if( subdir )
-        {
-            subdir->osRootPath = osRootPath;
-            subdir->osBasePath = entry.pszName;
-            aoStackSubDir.push_back(subdir);
-        }
-        entry.nMode = 0;
-    }
+// const VSIDIREntry* VSIDIRGeneric::NextDirEntry()
+// {
+//     if( VSI_ISDIR(entry.nMode) && nRecurseDepth != 0 )
+//     {
+//         CPLString osCurFile(osRootPath);
+//         if( !osCurFile.empty() )
+//             osCurFile += '/';
+//         osCurFile += entry.pszName;
+//         auto subdir = static_cast<VSIDIRGeneric*>(
+//             poFS->VSIFilesystemHandler::OpenDir(osCurFile,
+//                 nRecurseDepth - 1, nullptr));
+//         if( subdir )
+//         {
+//             subdir->osRootPath = osRootPath;
+//             subdir->osBasePath = entry.pszName;
+//             aoStackSubDir.push_back(subdir);
+//         }
+//         entry.nMode = 0;
+//     }
 
-    while( !aoStackSubDir.empty() )
-    {
-        auto l_entry = aoStackSubDir.back()->NextDirEntry();
-        if( l_entry )
-        {
-            return l_entry;
-        }
-        delete aoStackSubDir.back();
-        aoStackSubDir.pop_back();
-    }
+//     while( !aoStackSubDir.empty() )
+//     {
+//         auto l_entry = aoStackSubDir.back()->NextDirEntry();
+//         if( l_entry )
+//         {
+//             return l_entry;
+//         }
+//         delete aoStackSubDir.back();
+//         aoStackSubDir.pop_back();
+//     }
 
-    if( papszContent == nullptr )
-    {
-        return nullptr;
-    }
+//     if( papszContent == nullptr )
+//     {
+//         return nullptr;
+//     }
 
-    while( true )
-    {
-        if( !papszContent[nPos] )
-        {
-            return nullptr;
-        }
-        // Skip . and ..entries
-        if( papszContent[nPos][0] == '.' &&
-            (papszContent[nPos][1] == '\0' ||
-             (papszContent[nPos][1] == '.' &&
-              papszContent[nPos][2] == '\0')) )
-        {
-            nPos ++;
-        }
-        else
-        {
-            break;
-        }
-    }
+//     while( true )
+//     {
+//         if( !papszContent[nPos] )
+//         {
+//             return nullptr;
+//         }
+//         // Skip . and ..entries
+//         if( papszContent[nPos][0] == '.' &&
+//             (papszContent[nPos][1] == '\0' ||
+//              (papszContent[nPos][1] == '.' &&
+//               papszContent[nPos][2] == '\0')) )
+//         {
+//             nPos ++;
+//         }
+//         else
+//         {
+//             break;
+//         }
+//     }
 
-    CPLFree(entry.pszName);
-    CPLString osName(osBasePath);
-    if( !osName.empty() )
-        osName += '/';
-    osName += papszContent[nPos];
-    entry.pszName = CPLStrdup(osName);
-    VSIStatBufL sStatL;
-    CPLString osCurFile(osRootPath);
-    if( !osCurFile.empty() )
-        osCurFile += '/';
-    osCurFile += entry.pszName;
-    if( VSIStatL(osCurFile, &sStatL) == 0 )
-    {
-        entry.nMode = sStatL.st_mode;
-        entry.nSize = sStatL.st_size;
-        entry.nMTime = sStatL.st_mtime;
-        entry.bModeKnown = true;
-        entry.bSizeKnown = true;
-        entry.bMTimeKnown = true;
-    }
-    else
-    {
-        entry.nMode = 0;
-        entry.nSize = 0;
-        entry.nMTime = 0;
-        entry.bModeKnown = false;
-        entry.bSizeKnown = false;
-        entry.bMTimeKnown = false;
-    }
-    nPos ++;
+//     CPLFree(entry.pszName);
+//     CPLString osName(osBasePath);
+//     if( !osName.empty() )
+//         osName += '/';
+//     osName += papszContent[nPos];
+//     entry.pszName = CPLStrdup(osName);
+//     VSIStatBufL sStatL;
+//     CPLString osCurFile(osRootPath);
+//     if( !osCurFile.empty() )
+//         osCurFile += '/';
+//     osCurFile += entry.pszName;
+//     if( VSIStatL(osCurFile, &sStatL) == 0 )
+//     {
+//         entry.nMode = sStatL.st_mode;
+//         entry.nSize = sStatL.st_size;
+//         entry.nMTime = sStatL.st_mtime;
+//         entry.bModeKnown = true;
+//         entry.bSizeKnown = true;
+//         entry.bMTimeKnown = true;
+//     }
+//     else
+//     {
+//         entry.nMode = 0;
+//         entry.nSize = 0;
+//         entry.nMTime = 0;
+//         entry.bModeKnown = false;
+//         entry.bSizeKnown = false;
+//         entry.bMTimeKnown = false;
+//     }
+//     nPos ++;
 
-    return &(entry);
-}
+//     return &(entry);
+// }
 
 /************************************************************************/
 /*                           UnlinkBatch()                              */
@@ -1568,47 +1568,47 @@ int* VSIFilesystemHandler::UnlinkBatch( CSLConstList papszFiles )
 /*                          RmdirRecursive()                            */
 /************************************************************************/
 
-int VSIFilesystemHandler::RmdirRecursive( const char* pszDirname )
-{
-    CPLString osDirnameWithoutEndSlash(pszDirname);
-    if( !osDirnameWithoutEndSlash.empty() && osDirnameWithoutEndSlash.back() == '/' )
-        osDirnameWithoutEndSlash.resize( osDirnameWithoutEndSlash.size() - 1 );
+// int VSIFilesystemHandler::RmdirRecursive( const char* pszDirname )
+// {
+//     CPLString osDirnameWithoutEndSlash(pszDirname);
+//     if( !osDirnameWithoutEndSlash.empty() && osDirnameWithoutEndSlash.back() == '/' )
+//         osDirnameWithoutEndSlash.resize( osDirnameWithoutEndSlash.size() - 1 );
 
-    CPLStringList aosOptions;
-    auto poDir = std::unique_ptr<VSIDIR>(OpenDir(pszDirname, -1, aosOptions.List()));
-    if( !poDir )
-        return -1;
-    std::vector<std::string> aosDirs;
-    while( true )
-    {
-        auto entry = poDir->NextDirEntry();
-        if( !entry )
-            break;
+//     CPLStringList aosOptions;
+//     auto poDir = std::unique_ptr<VSIDIR>(OpenDir(pszDirname, -1, aosOptions.List()));
+//     if( !poDir )
+//         return -1;
+//     std::vector<std::string> aosDirs;
+//     while( true )
+//     {
+//         auto entry = poDir->NextDirEntry();
+//         if( !entry )
+//             break;
 
-        const CPLString osFilename(osDirnameWithoutEndSlash + '/' + entry->pszName);
-        if( (entry->nMode & S_IFDIR) )
-        {
-            aosDirs.push_back(osFilename);
-        }
-        else
-        {
-            if( VSIUnlink(osFilename) != 0 )
-                return -1;
-        }
-    }
+//         const CPLString osFilename(osDirnameWithoutEndSlash + '/' + entry->pszName);
+//         if( (entry->nMode & S_IFDIR) )
+//         {
+//             aosDirs.push_back(osFilename);
+//         }
+//         else
+//         {
+//             if( VSIUnlink(osFilename) != 0 )
+//                 return -1;
+//         }
+//     }
 
-    // Sort in reverse order, so that inner-most directories are deleted first
-    std::sort(aosDirs.begin(), aosDirs.end(),
-              [](const std::string& a, const std::string& b) {return a > b; });
+//     // Sort in reverse order, so that inner-most directories are deleted first
+//     std::sort(aosDirs.begin(), aosDirs.end(),
+//               [](const std::string& a, const std::string& b) {return a > b; });
 
-    for(const auto& osDir: aosDirs )
-    {
-        if( VSIRmdir(osDir.c_str()) != 0 )
-            return -1;
-    }
+//     for(const auto& osDir: aosDirs )
+//     {
+//         if( VSIRmdir(osDir.c_str()) != 0 )
+//             return -1;
+//     }
 
-    return VSIRmdir(pszDirname);
-}
+//     return VSIRmdir(pszDirname);
+// }
 
 /************************************************************************/
 /*                          GetFileMetadata()                           */
@@ -2660,13 +2660,13 @@ char **VSIGetFileSystemsPrefixes( void )
  * @since GDAL 2.3
  */
 
-const char* VSIGetFileSystemOptions( const char* pszFilename )
-{
-    VSIFilesystemHandler *poFSHandler =
-        VSIFileManager::GetHandler( pszFilename );
+// const char* VSIGetFileSystemOptions( const char* pszFilename )
+// {
+//     VSIFilesystemHandler *poFSHandler =
+//         VSIFileManager::GetHandler( pszFilename );
 
-    return poFSHandler->GetOptions();
-}
+//     return poFSHandler->GetOptions();
+// }
 
 /************************************************************************/
 /* ==================================================================== */
@@ -2729,34 +2729,34 @@ VSIFileManager *VSIFileManager::Get()
 
       poManager = new VSIFileManager;
       VSIInstallLargeFileHandler();
-      VSIInstallSubFileHandler();
-      VSIInstallMemFileHandler();
-#ifdef HAVE_LIBZ
-      VSIInstallGZipFileHandler();
-      VSIInstallZipFileHandler();
-#endif
+    //   VSIInstallSubFileHandler();
+    //   VSIInstallMemFileHandler();
+// #ifdef HAVE_LIBZ
+//       VSIInstallGZipFileHandler();
+//       VSIInstallZipFileHandler();
+// #endif
 #ifdef HAVE_CURL
-      VSIInstallCurlFileHandler();
-      VSIInstallCurlStreamingFileHandler();
+    //   VSIInstallCurlFileHandler();
+    //   VSIInstallCurlStreamingFileHandler();
       VSIInstallS3FileHandler();
-      VSIInstallS3StreamingFileHandler();
-      VSIInstallGSFileHandler();
-      VSIInstallGSStreamingFileHandler();
-      VSIInstallAzureFileHandler();
-      VSIInstallAzureStreamingFileHandler();
-      VSIInstallADLSFileHandler();
-      VSIInstallOSSFileHandler();
-      VSIInstallOSSStreamingFileHandler();
-      VSIInstallSwiftFileHandler();
-      VSIInstallSwiftStreamingFileHandler();
-      VSIInstallWebHdfsHandler();
+    //   VSIInstallS3StreamingFileHandler();
+    //   VSIInstallGSFileHandler();
+    //   VSIInstallGSStreamingFileHandler();
+    //   VSIInstallAzureFileHandler();
+    //   VSIInstallAzureStreamingFileHandler();
+    //   VSIInstallADLSFileHandler();
+    //   VSIInstallOSSFileHandler();
+    //   VSIInstallOSSStreamingFileHandler();
+    //   VSIInstallSwiftFileHandler();
+    //   VSIInstallSwiftStreamingFileHandler();
+    //   VSIInstallWebHdfsHandler();
 #endif
-      VSIInstallStdinHandler();
-      VSIInstallHdfsHandler();
-      VSIInstallStdoutHandler();
-      VSIInstallSparseFileHandler();
-      VSIInstallTarFileHandler();
-      VSIInstallCryptFileHandler();
+    //   VSIInstallStdinHandler();
+    //   VSIInstallHdfsHandler();
+    //   VSIInstallStdoutHandler();
+    //   VSIInstallSparseFileHandler();
+    //   VSIInstallTarFileHandler();
+    //   VSIInstallCryptFileHandler();
 
       return poManager;
 

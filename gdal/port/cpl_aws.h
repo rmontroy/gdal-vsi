@@ -106,7 +106,8 @@ public:
 
         virtual bool AllowAutomaticRedirection() { return true; }
         virtual bool CanRestartOnError(const char*, const char* /* pszHeaders*/,
-                                       bool /*bSetError*/, bool* /*pbUpdateMap*/ = nullptr) { return false;}
+                                       bool /*bSetError*/, bool* /*pbUpdateMap*/ = nullptr)
+                                       { return false; }
 
         virtual const CPLString& GetURL() const = 0;
         CPLString GetURLNoKVP() const;
@@ -193,9 +194,9 @@ class VSIS3HandleHelper final: public IVSIS3LikeHandleHelper
             size_t nBytesContent = 0) const override;
 
         bool AllowAutomaticRedirection() override { return false; }
-        bool CanRestartOnError(const char*, const char* pszHeaders,
-                               bool bSetError,
-                               bool* pbUpdateMap = nullptr) override;
+        bool CanRestartOnError(const char*, const char* /*pszHeaders*/,
+                               bool,
+                               bool* = nullptr) override;
 
         const CPLString& GetURL() const override { return m_osURL; }
         const CPLString& GetBucket() const { return m_osBucket; }

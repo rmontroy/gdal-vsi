@@ -158,8 +158,8 @@ public:
                             const char *pszAccess,
                             bool bSetError,
                             CSLConstList /* papszOptions */ ) override;
-    int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
-              int nFlags ) override;
+    // int Stat( const char *pszFilename, VSIStatBufL *pStatBuf,
+    //           int nFlags ) override;
     int Unlink( const char *pszFilename ) override;
     int Rename( const char *oldpath, const char *newpath ) override;
     int Mkdir( const char *pszDirname, long nMode ) override;
@@ -652,11 +652,11 @@ VSIUnixStdioFilesystemHandler::Open( const char *pszFilename,
 /*      If VSI_CACHE is set we want to use a cached reader instead      */
 /*      of more direct io on the underlying file.                       */
 /* -------------------------------------------------------------------- */
-    if( bReadOnly &&
-        CPLTestBool( CPLGetConfigOption( "VSI_CACHE", "FALSE" ) ) )
-    {
-        return VSICreateCachedFile( poHandle );
-    }
+    // if( bReadOnly &&
+    //     CPLTestBool( CPLGetConfigOption( "VSI_CACHE", "FALSE" ) ) )
+    // {
+    //     return VSICreateCachedFile( poHandle );
+    // }
 
     return poHandle;
 }
@@ -665,12 +665,12 @@ VSIUnixStdioFilesystemHandler::Open( const char *pszFilename,
 /*                                Stat()                                */
 /************************************************************************/
 
-int VSIUnixStdioFilesystemHandler::Stat( const char * pszFilename,
-                                         VSIStatBufL * pStatBuf,
-                                         int /* nFlags */ )
-{
-    return( VSI_STAT64( pszFilename, pStatBuf ) );
-}
+// int VSIUnixStdioFilesystemHandler::Stat( const char * pszFilename,
+//                                          VSIStatBufL * pStatBuf,
+//                                          int /* nFlags */ )
+// {
+//     return( VSI_STAT64( pszFilename, pStatBuf ) );
+// }
 
 /************************************************************************/
 /*                               Unlink()                               */

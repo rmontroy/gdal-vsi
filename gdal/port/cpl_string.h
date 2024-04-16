@@ -92,7 +92,7 @@ char CPL_DLL **CSLTokenizeString2( const char *pszString,
 /** Flag for CSLTokenizeString2() to strip trailaing spaces */
 #define CSLT_STRIPENDSPACES     0x0020
 
-int CPL_DLL CSLPrint(CSLConstList papszStrList, FILE *fpOut);
+// int CPL_DLL CSLPrint(CSLConstList papszStrList, FILE *fpOut);
 char CPL_DLL **CSLLoad(const char *pszFname) CPL_WARN_UNUSED_RESULT;
 char CPL_DLL **CSLLoad2(
     const char *pszFname, int nMaxLines, int nMaxCols,
